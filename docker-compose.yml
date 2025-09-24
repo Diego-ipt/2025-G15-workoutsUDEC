@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: workouts_db
+    environment:
+      POSTGRES_DB: workouts_db
+      POSTGRES_USER: workout_user  
+      POSTGRES_PASSWORD: workout_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # LECCIÓN 5: HEALTH CHECKS - Verificación automática
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workout_user -d workouts_db"]
+      interval: 10s      # Cada 10 segundos
+      timeout: 5s        # Espera máximo 5 segundos
+      retries: 5         # Intenta 5 veces antes de marcar como unhealthy
+      start_period: 30s  # Espera 30s antes de empezar a verificar
+    # LECCIÓN 6: REDES - Comunicación entre contenedores
+    networks:
+      - workout_network
+
+# Definir volúmenes nombrados
+volumes:
+  postgres_data:
+    driver: local
+
+# LECCIÓN 6: REDES - Definir redes personalizadas
+networks:
+  workout_network:
+    driver: bridge
