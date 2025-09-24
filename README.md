@@ -42,6 +42,11 @@ This application consists of FastAPI backend with a React TypeScript frontend, p
 
 Check the readme in workouts_udec_backend and workouts_udec_frontend to get started.
 
+Para correr todo junto:
+
+```bash
+docker-compse up --build
+```
 ## 🗄️ Database with Docker
 
 ### Prerequisites
