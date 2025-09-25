@@ -45,7 +45,7 @@ Check the readme in workouts_udec_backend and workouts_udec_frontend to get star
 Para correr todo junto:
 
 ```bash
-docker-compse up --build
+docker-compose up --build
 ```
 ## 🗄️ Database with Docker
 
