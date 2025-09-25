@@ -1,5 +1,6 @@
 # Archivo: workouts_udec_backend/Dockerfile
 
+# --- Builder ---
 # Imagen de docker de python 3.11, pero ligero para optimizar el espacio.
 FROM python:3.11-slim as builder
 
@@ -16,6 +17,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 
+# --- Produccion ---
 # Imagen final (de produccion)
 FROM python:3.11-slim
 
@@ -28,6 +30,10 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 # Copiamos el codigo de backend
 COPY . .
 
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT [ "./entrypoint.sh" ]
+
 # El servidor Uvicorn se ejecutará en el puerto 8000, así que lo exponemos
 EXPOSE 8000
 
@@ -39,4 +45,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 # Comando para iniciar la aplicación.
 # Host 0.0.0.0 importante que sea accesible desde fuera del contenedor.
 # Crea el usuario admin antes que nada y luego corre la API con uvicorn
-CMD python initial_setup.py && python create_admin.py && python -m uvicorn main:app --host 0.0.0.0 --port 8000
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
