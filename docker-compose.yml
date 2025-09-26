@@ -49,9 +49,10 @@ services:
     networks:
       - workouts_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost"]
       interval: 10s
       retries: 3
+
 
 # Definir volúmenes nombrados
 volumes:
