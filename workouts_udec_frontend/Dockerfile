@@ -12,16 +12,12 @@ RUN npm run build
 # se considera una configuracion de nginx propia
 FROM nginx:1.27-alpine
 
-# Crear usuario antes de usarlo
-RUN adduser -D appuser
+#crear directorios necesarios
+RUN mkdir -p /var/cache/nginx/client_temp
 
-# Crear directorio y asignar permisos
-RUN mkdir -p /var/cache/nginx/client_temp && \
-    mkdir -p /tmp && \
-    echo "pid /tmp/nginx.pid;" > /etc/nginx/nginx.conf
-
+#copiar archivos estáticos y configuración
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Cambiar a usuario no-root
-#USER appuser
+#puerto
+EXPOSE 80
