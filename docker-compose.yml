@@ -35,6 +35,24 @@ services:
         condition: service_healthy # No iniciara backend hasta que la DB este lista
     networks:
       - workouts_network
+      
+  frontend:
+    build:
+      context: ./workouts_udec_frontend
+      dockerfile: Dockerfile
+    container_name: frontend_service
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - workouts_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      retries: 3
+
 # Definir volúmenes nombrados
 volumes:
   postgres_data:
