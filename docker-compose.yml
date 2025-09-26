@@ -10,14 +10,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    # LECCIÓN 5: HEALTH CHECKS - Verificación automática
+    #Verificación automática
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U workouts_user -d workouts_db"]
       interval: 10s      # Cada 10 segundos
       timeout: 5s        # Espera máximo 5 segundos
       retries: 5         # Intenta 5 veces antes de marcar como unhealthy
       start_period: 30s  # Espera 30s antes de empezar a verificar
-    # LECCIÓN 6: REDES - Comunicación entre contenedores
+    #Comunicación entre contenedores
     networks:
       - workouts_network
 
@@ -58,7 +58,7 @@ volumes:
   postgres_data:
     driver: local
 
-# LECCIÓN 6: REDES - Definir redes personalizadas
+#Definir redes personalizadas
 networks:
   workouts_network:
     driver: bridge
