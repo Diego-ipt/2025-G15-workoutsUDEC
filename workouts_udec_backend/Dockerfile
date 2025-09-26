@@ -37,11 +37,6 @@ ENTRYPOINT [ "./entrypoint.sh" ]
 # El servidor Uvicorn se ejecutará en el puerto 8000, así que lo exponemos
 EXPOSE 8000
 
-# HEALTHCHECK
-# Asegurar que API que devuelva un 200 OK.
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD [ "python", "-c", "import requests; requests.get('http://localhost:8000/health')" ]
-
 # Comando para iniciar la aplicación.
 # Host 0.0.0.0 importante que sea accesible desde fuera del contenedor.
 # Crea el usuario admin antes que nada y luego corre la API con uvicorn
