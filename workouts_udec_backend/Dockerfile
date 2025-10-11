@@ -30,8 +30,9 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 # Copiamos el codigo de backend
 COPY . .
 
+# Copiamos entrypoint.sh y aseguramos line endings Unix y permisos ejecutables
 COPY entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
+RUN apt-get update && apt-get install -y dos2unix && dos2unix ./entrypoint.sh && chmod +x ./entrypoint.sh && apt-get remove -y dos2unix && apt-get autoremove -y
 ENTRYPOINT [ "./entrypoint.sh" ]
 
 # El servidor Uvicorn se ejecutará en el puerto 8000, así que lo exponemos
