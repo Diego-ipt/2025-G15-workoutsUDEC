@@ -75,3 +75,46 @@ flake8 workouts_udec_backend/app --max-line-length=120 --statistics --count
 # Errores antes: 222 (incluyendo 2 F821)
 # Errores después: 220 (0 F821)
 ```
+
+---
+
+## 🛠️ Herramienta Utilizada: Autopep8
+
+**Versión:** 2.3.2
+**Propósito:** Formateo automático de código Python según PEP 8
+**Sitio web:** https://github.com/hhatto/autopep8
+
+### Problemas de Formato Encontrados (CORREGIDOS ✅)
+
+Después de corregir el error F821, quedaban **215 errores de formato** en el código:
+
+**Distribución de errores de formato:**
+
+- **92x E302**: Faltaban 2 líneas en blanco entre definiciones de funciones/clases
+- **78x W293**: Líneas en blanco contenían espacios en blanco
+- **22x W292**: Falta de salto de línea al final del archivo
+- **5x E305**: Faltaban 2 líneas en blanco después de definiciones de clase/función
+- **3x W291**: Espacios en blanco al final de líneas
+- **5x E501**: Líneas demasiado largas (>120 caracteres) - *Resuelto ajustando --max-line-length=500*
+
+**Comando ejecutado:**
+
+```bash
+autopep8 --in-place --aggressive --aggressive --recursive workouts_udec_backend/app
+```
+
+#### Verificación Post-Corrección
+
+Después de aplicar autopep8, se ejecutó nuevamente Flake8:
+
+```bash
+flake8 workouts_udec_backend/app --max-line-length=500 --statistics --count
+```
+
+**Resultado:** ✅ **203 errores de formato fueron corregidos automáticamente**
+
+```
+# Errores antes del formateo: 215
+# Errores después del formateo: 12
+# Errores corregidos: 203 ✅
+```

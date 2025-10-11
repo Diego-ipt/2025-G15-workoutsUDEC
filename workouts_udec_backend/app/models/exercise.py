@@ -4,13 +4,15 @@ from sqlalchemy import DateTime
 import enum
 from app.db.base_class import Base
 
+
 class ExerciseType(enum.Enum):
     WEIGHT_BASED = "WEIGHT_BASED"
     TIME_BASED = "TIME_BASED"
 
+
 class Exercise(Base):
     __tablename__ = "exercises"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
     description = Column(Text, nullable=True)

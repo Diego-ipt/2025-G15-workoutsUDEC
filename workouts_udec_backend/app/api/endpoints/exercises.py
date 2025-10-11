@@ -9,6 +9,7 @@ from app.schemas.exercise import Exercise as ExerciseSchema, ExerciseCreate, Exe
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[ExerciseSchema])
 def read_exercises(
     db: Session = Depends(dependencies.get_db),
@@ -18,6 +19,7 @@ def read_exercises(
 ) -> Any:
     exercises = exercise.get_active(db, skip=skip, limit=limit)
     return exercises
+
 
 @router.get("/{exercise_id}", response_model=ExerciseSchema)
 def read_exercise(
@@ -31,6 +33,7 @@ def read_exercise(
         raise HTTPException(status_code=404, detail="Exercise not found")
     return exercise_obj
 
+
 @router.post("/", response_model=ExerciseSchema)
 def create_exercise(
     *,
@@ -40,6 +43,7 @@ def create_exercise(
 ) -> Any:
     exercise_obj = exercise.create(db, obj_in=exercise_in)
     return exercise_obj
+
 
 @router.put("/{exercise_id}", response_model=ExerciseSchema)
 def update_exercise(
@@ -54,6 +58,7 @@ def update_exercise(
         raise HTTPException(status_code=404, detail="Exercise not found")
     exercise_obj = exercise.update(db, db_obj=exercise_obj, obj_in=exercise_in)
     return exercise_obj
+
 
 @router.delete("/{exercise_id}")
 def delete_exercise(

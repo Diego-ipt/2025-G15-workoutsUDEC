@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from app.models.exercise import ExerciseType
 
+
 class ExerciseBase(BaseModel):
     name: str
     description: Optional[str] = None
@@ -12,8 +13,10 @@ class ExerciseBase(BaseModel):
     instructions: Optional[str] = None
     is_active: bool = True
 
+
 class ExerciseCreate(ExerciseBase):
     pass
+
 
 class ExerciseUpdate(BaseModel):
     name: Optional[str] = None
@@ -24,6 +27,7 @@ class ExerciseUpdate(BaseModel):
     instructions: Optional[str] = None
     is_active: Optional[bool] = None
 
+
 class ExerciseInDBBase(ExerciseBase):
     id: Optional[int] = None
     created_at: Optional[datetime] = None
@@ -31,6 +35,7 @@ class ExerciseInDBBase(ExerciseBase):
 
     class Config:
         from_attributes = True
+
 
 class Exercise(ExerciseInDBBase):
     pass

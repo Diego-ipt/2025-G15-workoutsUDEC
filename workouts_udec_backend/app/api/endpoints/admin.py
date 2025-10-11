@@ -17,6 +17,7 @@ from app.schemas.workout import (
 
 router = APIRouter()
 
+
 @router.get("/users", response_model=List[UserSchema])
 def read_users(
     db: Session = Depends(dependencies.get_db),
@@ -26,6 +27,7 @@ def read_users(
 ) -> Any:
     users = user.get_multi(db, skip=skip, limit=limit)
     return users
+
 
 @router.post("/users", response_model=UserSchema)
 def create_user(
@@ -49,6 +51,7 @@ def create_user(
     user_obj = user.create(db, obj_in=user_in)
     return user_obj
 
+
 @router.put("/users/{user_id}", response_model=UserSchema)
 def update_user(
     *,
@@ -63,6 +66,7 @@ def update_user(
     user_obj = user.update(db, db_obj=user_obj, obj_in=user_in)
     return user_obj
 
+
 @router.delete("/users/{user_id}")
 def delete_user(
     *,
@@ -73,11 +77,13 @@ def delete_user(
     user_obj = user.get(db, id=user_id)
     if not user_obj:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     user.delete_with_cascade(db, user_id=user_id)
     return {"message": "User and all associated data deleted successfully"}
 
 # Workout Template Management
+
+
 @router.get("/workout-templates", response_model=List[WorkoutTemplateSchema])
 def read_workout_templates(
     db: Session = Depends(dependencies.get_db),
@@ -85,10 +91,13 @@ def read_workout_templates(
     limit: int = 100,
     current_user: User = Depends(dependencies.get_current_active_admin),
 ) -> Any:
-    templates = workout_template.get_multi_with_exercises(db, skip=skip, limit=limit)
+    templates = workout_template.get_multi_with_exercises(
+        db, skip=skip, limit=limit)
     return templates
 
-@router.get("/workout-templates/{template_id}", response_model=WorkoutTemplateSchema)
+
+@router.get("/workout-templates/{template_id}",
+            response_model=WorkoutTemplateSchema)
 def read_workout_template(
     *,
     db: Session = Depends(dependencies.get_db),
@@ -97,8 +106,11 @@ def read_workout_template(
 ) -> Any:
     template = workout_template.get_with_exercises(db, id=template_id)
     if not template:
-        raise HTTPException(status_code=404, detail="Workout template not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Workout template not found")
     return template
+
 
 @router.post("/workout-templates", response_model=WorkoutTemplateSchema)
 def create_workout_template(
@@ -107,10 +119,13 @@ def create_workout_template(
     template_in: WorkoutTemplateCreate,
     current_user: User = Depends(dependencies.get_current_active_admin),
 ) -> Any:
-    template_obj = workout_template.create(db, obj_in=template_in, created_by=current_user.id)
+    template_obj = workout_template.create(
+        db, obj_in=template_in, created_by=current_user.id)
     return template_obj
 
-@router.put("/workout-templates/{template_id}", response_model=WorkoutTemplateSchema)
+
+@router.put("/workout-templates/{template_id}",
+            response_model=WorkoutTemplateSchema)
 def update_workout_template(
     *,
     db: Session = Depends(dependencies.get_db),
@@ -120,9 +135,13 @@ def update_workout_template(
 ) -> Any:
     template_obj = workout_template.get(db, id=template_id)
     if not template_obj:
-        raise HTTPException(status_code=404, detail="Workout template not found")
-    template_obj = workout_template.update(db, db_obj=template_obj, obj_in=template_in)
+        raise HTTPException(
+            status_code=404,
+            detail="Workout template not found")
+    template_obj = workout_template.update(
+        db, db_obj=template_obj, obj_in=template_in)
     return template_obj
+
 
 @router.delete("/workout-templates/{template_id}")
 def delete_workout_template(
@@ -133,12 +152,17 @@ def delete_workout_template(
 ) -> Any:
     template_obj = workout_template.get(db, id=template_id)
     if not template_obj:
-        raise HTTPException(status_code=404, detail="Workout template not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Workout template not found")
     workout_template.remove(db, id=template_id)
     return {"message": "Workout template deleted successfully"}
 
 # Template Exercise Management
-@router.post("/workout-templates/{template_id}/exercises", response_model=WorkoutTemplateExerciseSchema)
+
+
+@router.post("/workout-templates/{template_id}/exercises",
+             response_model=WorkoutTemplateExerciseSchema)
 def add_exercise_to_template(
     *,
     db: Session = Depends(dependencies.get_db),
@@ -148,13 +172,16 @@ def add_exercise_to_template(
 ) -> Any:
     template = workout_template.get(db, id=template_id)
     if not template:
-        raise HTTPException(status_code=404, detail="Workout template not found")
-    
+        raise HTTPException(
+            status_code=404,
+            detail="Workout template not found")
+
     exercise_data = exercise_in.dict()
     template_exercise = workout_template.add_exercise_to_template(
         db, template_id=template_id, exercise_data=exercise_data
     )
     return template_exercise
+
 
 @router.delete("/workout-templates/{template_id}/exercises/{exercise_id}")
 def remove_exercise_from_template(
@@ -166,12 +193,16 @@ def remove_exercise_from_template(
 ) -> Any:
     template = workout_template.get(db, id=template_id)
     if not template:
-        raise HTTPException(status_code=404, detail="Workout template not found")
-    
+        raise HTTPException(
+            status_code=404,
+            detail="Workout template not found")
+
     success = workout_template.remove_exercise_from_template(
         db, template_id=template_id, template_exercise_id=exercise_id
     )
     if not success:
-        raise HTTPException(status_code=404, detail="Template exercise not found")
-    
+        raise HTTPException(
+            status_code=404,
+            detail="Template exercise not found")
+
     return {"message": "Exercise removed from template successfully"}
