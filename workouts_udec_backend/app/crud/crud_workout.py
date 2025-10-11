@@ -209,9 +209,7 @@ class CRUDWorkout(CRUDBase[Workout, WorkoutCreate, WorkoutUpdate]):
             Workout.completed_at.isnot(None)
         ).order_by(Workout.completed_at.desc()).offset(skip).limit(limit).all()
 
-    def create_from_template(self, db: Session, *                             , template, workout_data: Dict[str, Any]) -> Workout:
-        from app.models.workout import ExerciseSet
-
+    def create_from_template(self, db: Session, *, template, workout_data: Dict[str, Any]) -> Workout:
         # Create the workout
         new_workout = self.create(db, obj_in=workout_data)
 
@@ -400,7 +398,7 @@ class CRUDWorkout(CRUDBase[Workout, WorkoutCreate, WorkoutUpdate]):
             exercise_id: int,
             limit: int = 10) -> list:
         """Get exercise progression data for a user and exercise."""
-        from app.models.workout import WorkoutExercise, ExerciseSet
+        from app.models.workout import WorkoutExercise
         from sqlalchemy.orm import joinedload
 
         # Get previous completed workouts with this exercise

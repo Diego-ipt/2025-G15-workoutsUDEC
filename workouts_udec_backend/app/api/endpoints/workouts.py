@@ -1,7 +1,6 @@
 from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
 from sqlalchemy.sql import func
 
 from app.api import dependencies
@@ -9,7 +8,6 @@ from app.crud.crud_workout import workout, workout_template
 from app.models.user import User
 from app.schemas.workout import (
     Workout as WorkoutSchema,
-    WorkoutHistory as WorkoutHistorySchema,
     WorkoutCreate,
     WorkoutUpdate,
     WorkoutTemplate as WorkoutTemplateSchema,
