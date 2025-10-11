@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from sqlalchemy.orm import Session, joinedload
 from app.crud.base import CRUDBase
-from app.models.workout import WorkoutTemplate, Workout, WorkoutExercise, WorkoutTemplateExercise
+from app.models.workout import WorkoutTemplate, Workout, WorkoutExercise, WorkoutTemplateExercise, ExerciseSet
 from app.schemas.workout import (
     WorkoutTemplateCreate, 
     WorkoutTemplateUpdate,
