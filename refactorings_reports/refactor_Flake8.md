@@ -1,4 +1,4 @@
-# 📋 Informe de Refactorizaciones
+# 📋 Informe de Refactorizaciones encontrados por Flake8
 
 ---
 

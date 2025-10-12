@@ -266,7 +266,7 @@ def add_set_to_exercise(
             exercise_id=exercise_id,
             set_data=set_in)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.put("/{workout_id}/exercises/{exercise_id}/sets/{set_id}",
@@ -294,7 +294,7 @@ def update_exercise_set(
             set_id=set_id,
             set_data=set_in)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.delete("/{workout_id}/exercises/{exercise_id}/sets/{set_id}")
@@ -323,7 +323,7 @@ def delete_exercise_set(
             set_id=set_id)
         return {"message": "Exercise set deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 # Progression tracking
 
@@ -393,4 +393,4 @@ def update_exercise_notes(
                 "notes",
                 ""))
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
