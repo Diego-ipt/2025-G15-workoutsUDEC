@@ -1,7 +1,9 @@
+import enum
+
 from sqlalchemy import Column, Integer, String, Boolean, Text, Enum
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime
-import enum
+
 from app.db.base_class import Base
 
 

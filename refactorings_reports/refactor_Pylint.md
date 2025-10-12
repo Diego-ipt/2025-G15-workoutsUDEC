@@ -97,13 +97,6 @@ except ValueError as e:
 
 - `workouts_udec_backend/app/api/endpoints/workouts.py` (4 líneas)
 
-**Estadísticas:**
-
-- **Errores W0707 corregidos:** 4/4 (100%)
-- **Impacto funcional:** Ninguno (comportamiento idéntico para usuarios)
-- **Tiempo de implementación:** 2 minutos
-- **Riesgo:** 0% (cambio puramente aditivo)
-
 #### Ejemplo de Mejora en Debugging
 
 **ANTES (sin exception chaining):**
@@ -142,3 +135,62 @@ ValueError: Workout exercise with id 123 not found
 
 1. **Monitoreo mejorado:** Herramientas de APM pueden correlacionar errores por su causa raíz, generando mejores métricas y alertas.
 2. **Sin impacto funcional:** Los usuarios no perciben ningún cambio en el comportamiento de la API. La respuesta HTTP sigue siendo idéntica.
+
+## 🎨 Refactorización #2: Ordenamiento de Imports según PEP 8 (C0411)
+
+### Contexto
+
+Durante el análisis con Pylint, se detectaron **5 violaciones de orden de imports** en módulos de configuración, modelos y schemas. Estos archivos colocaban imports de la librería estándar de Python (como `datetime`, `typing`, `enum`) después de imports de terceros (como `pydantic`, `sqlalchemy`), violando la convención PEP 8.
+
+> **Nota:** Aunque `autopep8` (Refactorización #2 de Flake8) corrigió el espaciado y formato de los imports, no reordenó su secuencia. Esta refactorización complementa ese trabajo organizando los imports según la convención PEP 8 de separación por categorías (estándar → terceros → locales).
+
+### Problema Detectado
+
+**Errores Pylint:**
+
+```
+app/core/config.py:2:0: C0411: standard import "typing.Optional" should be placed before "pydantic_settings.BaseSettings"
+app/models/exercise.py:4:0: C0411: standard import "enum" should be placed before "sqlalchemy"
+app/schemas/exercise.py:3:0: C0411: standard import "datetime.datetime" should be placed before "pydantic.BaseModel"
+app/schemas/user.py:3:0: C0411: standard import "datetime.datetime" should be placed before "pydantic.BaseModel"
+app/schemas/workout.py:3:0: C0411: standard import "datetime.datetime" should be placed before "pydantic.BaseModel"
+```
+
+**Código problemático (patrón en los 5 archivos):**
+
+```python
+# ❌ ANTES - Orden incorrecto:
+from pydantic import BaseModel  # Terceros primero
+from datetime import datetime    # Estándar después
+```
+
+### Solución Implementada
+
+**Tipo de Refactorización:** Import Reordering - Reorganizar imports según PEP 8.
+
+**Patrón aplicado:**
+
+```python
+# ✅ DESPUÉS - Orden correcto PEP 8:
+from datetime import datetime    # 1. Librería estándar
+from typing import Optional
+
+from pydantic import BaseModel   # 2. Librerías de terceros
+
+from app.models import User      # 3. Imports locales
+```
+
+**Archivos modificados (5):**
+
+1. `app/core/config.py` - `typing.Optional` antes de `pydantic_settings`
+2. `app/models/exercise.py` - `enum` antes de `sqlalchemy`
+3. `app/schemas/exercise.py` - `datetime` antes de `pydantic`
+4. `app/schemas/user.py` - `datetime` antes de `pydantic`
+5. `app/schemas/workout.py` - `datetime` antes de `pydantic`
+
+### Ventajas de la Solución
+
+1. **Conformidad con PEP 8:** Sigue la guía oficial de estilo de Python, mejorando la consistencia del código.
+2. **Legibilidad:** Los imports organizados facilitan identificar dependencias externas vs. estándar.
+
+---
