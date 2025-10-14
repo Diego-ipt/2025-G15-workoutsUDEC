@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -50,8 +51,14 @@ const RegisterForm: React.FC = () => {
       } else {
         navigate('/dashboard');
       }
-    } catch (error: any) {
-      setError(error.response?.data?.detail || 'Registration failed');
+    } catch (error: unknown) {
+      let errorMessage = 'Registration failed';
+      if (isAxiosError(error) && error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+      } else if (error instanceof Error) {
+          errorMessage = error.message;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

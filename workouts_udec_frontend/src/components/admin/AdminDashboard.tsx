@@ -49,7 +49,7 @@ const AdminDashboard: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSaveUser = async (userData: UserCreate | any) => {
+  const handleSaveUser = async (userData: UserCreate) => {
     setModalLoading(true);
     setError('');
 

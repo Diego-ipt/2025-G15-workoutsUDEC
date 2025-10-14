@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,9 +19,17 @@ const LoginForm: React.FC = () => {
     try {
       await login({ username: email, password });
       navigate('/dashboard');
-    } catch (error: any) {
-      setError(error.response?.data?.detail || 'Login failed');
-    } finally {
+    } catch (error: unknown) {
+      let errorMessage = 'Login failed';
+      if (isAxiosError(error) && error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+      } else if (error instanceof Error) {
+          errorMessage = error.message;
+      }
+      setError(errorMessage);
+    } 
+    
+    finally {
       setLoading(false);
     }
   };

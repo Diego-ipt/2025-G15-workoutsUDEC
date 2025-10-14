@@ -3,6 +3,7 @@ import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
 import { exerciseService } from '../../services/exerciseService';
 import type { Exercise } from '../../types/exercise';
 import { ExerciseType } from '../../types/exercise';
+import { isAxiosError } from 'axios';
 
 interface ExerciseSelectorProps {
   isOpen: boolean;
@@ -30,8 +31,12 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ isOpen, onClose }) 
       setLoading(true);
       const exercisesData = await exerciseService.getExercises(0, 1000);
       setExercises(exercisesData.filter(ex => ex.is_active));
-    } catch (err: any) {
-      setError('Failed to load exercises');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(`Failed to load exercises: ${err.message}`);
+      } else {
+        setError(`Failed to load exercises`);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,11 +62,17 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ isOpen, onClose }) 
       
       await addExerciseToWorkout(exerciseData);
       onClose();
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || err.message || 'Failed to add exercise';
-      setError(errorMessage);
-      // Don't close modal on error, let user retry
-    } finally {
+    } catch (error: unknown) {
+        let errorMessage = 'Failed to add exercise';
+        if (isAxiosError(error) && error.response?.data?.detail) {
+            errorMessage = error.response.data.detail;
+        } else if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+        setError(errorMessage);
+    }
+  
+    finally {
       setAddingExerciseId(null);
     }
   };

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import type { User, UserCreate } from '../../types/auth';
+import { isAxiosError } from 'axios';
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (userData: UserCreate | any) => Promise<void>;
+  onSave: (userData: UserCreate) => Promise<void>;
   user?: User | null;
   loading: boolean;
 }
@@ -94,9 +95,16 @@ const UserModal: React.FC<UserModalProps> = ({
     try {
       await onSave(formData);
       onClose();
-    } catch (error: any) {
-      setError(error.response?.data?.detail || 'Failed to save user');
+    } catch (error: unknown) {
+      let errorMessage = 'Failed to save user';
+      if (isAxiosError(error) && error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+      } else if (error instanceof Error) {
+          errorMessage = error.message;
+      }
+      setError(errorMessage);
     }
+    
   };
 
   if (!isOpen) return null;

@@ -8,6 +8,7 @@ import type {
   ExerciseSetUpdate
 } from '../types/workout';
 import { workoutService } from '../services/workoutService';
+import { AxiosError, isAxiosError } from 'axios';
 
 interface ActiveWorkoutContextType {
   // State
@@ -117,18 +118,17 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
     }
   };
 
-  const handleError = (err: any, defaultMessage: string) => {
+  const handleError = (err: unknown, defaultMessage: string) => {
     let message = defaultMessage;
-    
-    if (err.response?.data?.detail) {
+    if (isAxiosError(err) && err.response?.data?.detail) {
       const detail = err.response.data.detail;
       if (Array.isArray(detail)) {
         // Handle validation errors (422)
-        message = detail.map((error: any) => error.msg || error.message).join(', ');
+        message = detail.map((error: AxiosError) => error.message).join(', ');
       } else if (typeof detail === 'string') {
         message = detail;
       }
-    } else if (err.message) {
+    } else if (err instanceof Error) {
       message = err.message;
     }
     
@@ -229,10 +229,15 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           workout_exercises: [...(prev.workout_exercises || []), workoutExercise]
         };
       });
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || err.message || 'Failed to add exercise to workout';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch (error: unknown) {
+        let errorMessage = 'Failed to add exercise to workout';
+        if (isAxiosError(error) && error.response?.data?.detail) {
+            errorMessage = error.response.data.detail;
+        } else if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+        setError(errorMessage);
+        throw new Error(errorMessage);
     }
   };
 

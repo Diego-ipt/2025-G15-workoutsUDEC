@@ -51,7 +51,7 @@ const ExerciseManagement: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSaveExercise = async (exerciseData: ExerciseCreate | any) => {
+  const handleSaveExercise = async (exerciseData: ExerciseCreate) => {
     setModalLoading(true);
     setError('');
 

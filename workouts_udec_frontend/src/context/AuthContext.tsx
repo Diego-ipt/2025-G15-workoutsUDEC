@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
           setToken(storedToken);
-        } catch (error) {
+        } catch {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setToken(null);
@@ -49,7 +49,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
-    try {
       const tokenData = await authService.login(credentials);
       
       // Set token in localStorage first so the API interceptor can use it
@@ -61,25 +60,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
-    } catch (error) {
-      throw error;
-    }
   };
 
   const register = async (userData: UserCreate) => {
+    await authService.register(userData);
+    // Try to auto-login, but don't fail if it doesn't work
     try {
-      await authService.register(userData);
-      // Try to auto-login, but don't fail if it doesn't work
-      try {
-        await login({ username: userData.email, password: userData.password });
-      } catch (loginError) {
-        // Registration succeeded, but auto-login failed
-        // User can manually login instead
-        console.warn('Auto-login after registration failed:', loginError);
-      }
-    } catch (error) {
-      throw error;
+      await login({ username: userData.email, password: userData.password });
+    } catch (loginError) {
+      // Registration succeeded, but auto-login failed
+      // User can manually login instead
+      console.warn('Auto-login after registration failed:', loginError);
     }
+  
   };
 
   const logout = () => {

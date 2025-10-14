@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
+import { isAxiosError } from 'axios';
 
 const ProfileForm: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -102,8 +103,15 @@ const ProfileForm: React.FC = () => {
         confirmPassword: '',
       });
       
-    } catch (error: any) {
-      setError(error.response?.data?.detail || 'Failed to update profile');
+    } catch (error: unknown) {
+      let errorMessage = 'Failed to update profile';
+
+      if (isAxiosError(error) && error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+      } else if (error instanceof Error) {
+          errorMessage = error.message;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
