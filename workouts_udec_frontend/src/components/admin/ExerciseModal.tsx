@@ -87,7 +87,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     try {
       await onSave(formData);
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.response?.data?.detail || 'Failed to save exercise');
     }
   };

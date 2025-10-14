@@ -28,8 +28,12 @@ const AdminDashboard: React.FC = () => {
       setLoading(true);
       const data = await adminService.getUsers();
       setUsers(data);
-    } catch (error: any) {
-      setError('Failed to load users');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Failed to load users: ${error.message}`);
+      } else {
+        setError('Failed to load users')
+      }
     } finally {
       setLoading(false);
     }
@@ -63,8 +67,6 @@ const AdminDashboard: React.FC = () => {
       }
       setShowModal(false);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      throw error; // Let UserModal handle the error display
     } finally {
       setModalLoading(false);
     }
@@ -76,8 +78,12 @@ const AdminDashboard: React.FC = () => {
       setUsers(users.filter(u => u.id !== user.id));
       setSuccess('User deleted successfully');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError('Failed to delete user');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Failed to delete user: ${error.message}`);
+      } else {
+        setError('Failed to delete user');
+      }
       setTimeout(() => setError(''), 3000);
     }
   };

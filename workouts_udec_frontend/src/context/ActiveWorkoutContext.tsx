@@ -84,7 +84,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
         setActiveWorkout(workout);
         calculateTimer(workout);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load active workout:', err);
     } finally {
       setLoading(false);
@@ -143,7 +143,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
       const workout = await workoutService.createWorkout(workoutData);
       setActiveWorkout(workout);
       setWorkoutTimer(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to start workout');
       throw err;
     } finally {
@@ -158,7 +158,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
       const workout = await workoutService.createWorkoutFromTemplate(templateId, workoutData);
       setActiveWorkout(workout);
       setWorkoutTimer(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to start workout from template');
       throw err;
     } finally {
@@ -175,7 +175,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
       await workoutService.completeWorkout(activeWorkout.id);
       setActiveWorkout(null);
       setWorkoutTimer(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to complete workout');
       throw err;
     } finally {
@@ -193,7 +193,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
       setActiveWorkout(null);
       setWorkoutTimer(0);
       stopTimer();
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to cancel workout');
       throw err;
     } finally {
@@ -207,7 +207,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
     try {
       const updatedWorkout = await workoutService.updateWorkoutNotes(activeWorkout.id, notes);
       setActiveWorkout(updatedWorkout);
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to update workout notes');
       throw err;
     }
@@ -250,7 +250,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           workout_exercises: prev.workout_exercises?.filter(we => we.id !== workoutExerciseId) || []
         };
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to remove exercise from workout');
       throw err;
     }
@@ -271,7 +271,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           ) || []
         };
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to update exercise notes');
       throw err;
     }
@@ -295,7 +295,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           ) || []
         };
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to add set');
       throw err;
     }
@@ -324,7 +324,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           ) || []
         };
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to update set');
       throw err;
     }
@@ -351,7 +351,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
           ) || []
         };
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       handleError(err, 'Failed to delete set');
       throw err;
     }
@@ -367,7 +367,7 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
         const updated = await workoutService.getWorkout(activeWorkout.id);
         setActiveWorkout(updated);
         calculateTimer(updated);
-      } catch (err: any) {
+      } catch (err: unknown) {
         handleError(err, 'Failed to refresh workout');
       }
     }

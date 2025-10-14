@@ -30,8 +30,12 @@ const ExerciseManagement: React.FC = () => {
       setLoading(true);
       const data = await exerciseService.getExercises(0, 1000); // Get all exercises
       setExercises(data);
-    } catch (error: any) {
-      setError('Failed to load exercises');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Failed to load exercises: ${error.message}`);
+      } else {
+        setError('Failed to load exercises')
+      }
     } finally {
       setLoading(false);
     }
@@ -65,8 +69,6 @@ const ExerciseManagement: React.FC = () => {
       }
       setShowModal(false);
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      throw error; // Let ExerciseModal handle the error display
     } finally {
       setModalLoading(false);
     }
@@ -78,8 +80,12 @@ const ExerciseManagement: React.FC = () => {
       setExercises(exercises.filter(e => e.id !== exercise.id));
       setSuccess('Exercise deleted successfully');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (error: any) {
-      setError('Failed to delete exercise');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Failed to delete exercise: ${error.message}`);
+      } else {
+        setError('Failed to delete exercise');
+      }
       setTimeout(() => setError(''), 3000);
     }
   };
