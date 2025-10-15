@@ -21,24 +21,40 @@ En este proyecto se utilizó **ESLint v9+** con configuración moderna basada en
 
 #### 1. `react-refresh/only-export-components`
 
-- **Archivo**: `ActiveWorkoutContext.tsx`, `AuthContext.tsx`
-- **Descripción**: Fast Refresh requiere que el archivo exporte solo componentes. Se recomienda mover funciones auxiliares a otro archivo.
-- **Importancia de abordarlo**: Ignorar esta regla puede romper el sistema de recarga en caliente durante el desarrollo, dificultando la depuración y reduciendo la eficiencia del flujo de trabajo.
+- **Archivo/s**: `ActiveWorkoutContext.tsx`, `AuthContext.tsx`
+- **Descripción**: Fast Refresh requiere que el archivo exporte solo componentes. Por esta razón, es ideal mover funciones auxiliares a otro archivo.
+- **Importancia de abordarlo**: Ignorar esta regla puede romper el sistema de hot reload durante el desarrollo, dificultando la depuración y reduciendo la eficiencia del flujo de trabajo.
 
 #### 2. `no-case-declarations`
 
 - **Archivo**: `HistoryPage.tsx`
-- **Descripción**: No se deben declarar variables con `let`, `const` o `class` directamente dentro de bloques `case`. Usar bloques `{}` para encapsular.
-- **Importancia de abordarlo**: No encapsular las declaraciones puede generar errores de alcance y comportamiento inesperado, especialmente cuando se reutilizan variables en distintos casos del `switch`.
+- **Descripción**: No se deben declarar variables con `let`, `const` o `class` directamente dentro de bloques `case`. Se deben utilizar bloques `{}` para encapsular.
+- **Importancia de abordarlo**: No encapsular puede generar errores de alcance y comportamiento inesperado, especialmente cuando se reutilizan variables en distintos casos del `switch`.
 
 #### 3. `@typescript-eslint/no-explicit-any`
 
 - **Archivos**:
-  - `ProfileForm.tsx` (línea 80)
-  - `SetTracker.tsx` (línea 45)
-  - `adminService.ts` (línea 26)
-- **Descripción**: Se detectó el uso del tipo `any`, lo cual puede ocultar errores de tipo y reducir la seguridad del código.
+  - `ProfileForm.tsx` 
+  - `SetTracker.tsx` 
+  - `adminService.ts` 
+  - `LoginForm.tsx` 
+  
+- **Descripción**: En el código se hizo uso del tipo `any`, lo cual puede ocultar errores de tipo y reducir la seguridad del código.
 - **Importancia de abordarlo**: El uso excesivo de `any` debilita el sistema de tipos de TypeScript, lo que puede llevar a errores en tiempo de ejecución y dificulta el mantenimiento del código a largo plazo.
+
+### 4. `no-useless-catch`
+
+- **Archivos afectados**: `LoginForm.tsx`, `RegisterForm.tsx`, `ProfileForm.tsx`
+- **Descripción**: Se encontraron bloques `try-catch` que capturan errores solo para volver a lanzarlos sin lógica adicional.
+- **Impacto**: Añade ruido innecesario al código y complica la lectura sin aportar valor funcional.
+
+---
+
+### 5. `no-unused-vars`
+
+- **Archivos afectados**: múltiples componentes y servicios
+- **Descripción**: Variables declaradas pero nunca utilizadas.
+- **Impacto**: Código muerto que puede confundir a otros desarrolladores y aumentar la deuda técnica.
 
 ---
 
@@ -47,7 +63,7 @@ En este proyecto se utilizó **ESLint v9+** con configuración moderna basada en
 #### 1. `react-hooks/exhaustive-deps`
 
 - **Archivos**: `SetTracker.tsx`, `ActiveWorkoutContext.tsx`
-- **Descripción**: Los efectos `useEffect` tienen dependencias faltantes. Esto puede causar comportamientos inesperados.
+- **Descripción**: Los `useEffect` tienen dependencias faltantes. 
 - **Importancia de abordarlo**: No declarar todas las dependencias puede provocar que los efectos no se actualicen correctamente, generando bugs difíciles de rastrear y comportamientos inconsistentes en la interfaz.
 
 ---
@@ -56,17 +72,17 @@ En este proyecto se utilizó **ESLint v9+** con configuración moderna basada en
 
 #### Acerca de la relevancia de ESLint en este proyecto
 
-- **Detección temprana de errores**: ESLint permitió identificar errores lógicos y estructurales antes de ejecutar la aplicación, como declaraciones inválidas en bloques `case` y problemas de exportación que afectan el hot reload.
+- **Detección temprana de errores**: El uso de ESLint permitió identificar errores lógicos y estructurales, como declaraciones inválidas en bloques `case`, utilización de muchos `Any` y problemas de exportación que afectan el hot reload.
 
 #### Posibles mejoras futuras
 
 - Integrar ESLint con **Prettier** para formateo automático.
 - Ejecutar ESLint en CI/CD (por ejemplo, GitHub Actions) para mantener la calidad en cada push.
+- Definir y documentar reglas personalizadas para el equipo, especialmente en torno a manejo de errores y estructura de contextos (Como AuthContext y ActiveWorkoutContext).
 
 #### Aplicabilidad en otros proyectos
 
-ESLint es altamente adaptable a cualquier proyecto JavaScript/TypeScript, incluyendo stacks con React, Vue, Node.js o Next.js. Su integración con editores y pipelines lo convierte en una herramienta esencial para mantener estándares de calidad y facilitar la colaboración en equipos distribuidos.
-
+ESLint es altamente adaptable a cualquier proyecto JavaScript/TypeScript, incluyendo stacks con React, Vue, Node.js o Next.js. Su integración con editores y pipelines lo convierte en una herramienta esencial para mantener estándares de calidad.
 ---
 
 ### 2. Pylint
@@ -104,7 +120,7 @@ En este proyecto se utilizó **Pylint** con configuración estándar para analiz
   - `schemas/user.py` (línea 3): `datetime.datetime` después de `pydantic.BaseModel`
   - `schemas/workout.py` (línea 3): `datetime.datetime` después de `pydantic.BaseModel`
 - **Descripción**: Los imports de la librería estándar de Python están colocados después de imports de terceros, violando la convención PEP 8.
-- **Importancia de abordarlo**: El ordenamiento incorrecto de imports reduce la legibilidad del código y dificulta identificar las dependencias externas vs. estándar, además de violar las convenciones establecidas. Facilita refactoring: Es más fácil hacer cambios cuando el código tiene una estructura predecible. Reduce bugs: Un estilo consistente ayuda a detectar errores más fácilmente.
+- **Importancia de abordarlo**: El ordenamiento incorrecto de imports reduce la legibilidad del código y dificulta identificar las dependencias externas vs. estándar, además de violar las convenciones establecidas. 
 
 #### 3. `R1720: Unnecessary "elif" after "raise"`
 
@@ -115,7 +131,7 @@ En este proyecto se utilizó **Pylint** con configuración estándar para analiz
 #### 4. `R0801: Similar lines in files` (Código duplicado)
 
 - **Archivos**: `schemas/exercise.py` y `schemas/user.py`
-- **Descripción**: Se detectó código duplicado significativo entre las clases `ExerciseInDBBase` y `UserInDBBase`, que comparten un patrón idéntico de campos comunes (id, timestamps) y configuración.
+- **Descripción**: Se detectó código duplicado entre las clases `ExerciseInDBBase` y `UserInDBBase`, que comparten un patrón idéntico de campos comunes (id, timestamps) y configuración.
 - **Importancia de abordarlo**: La duplicación viola el principio DRY (Don't Repeat Yourself), genera deuda técnica arquitectónica y aumenta la superficie de mantenimiento al requerir cambios en múltiples archivos para modificaciones comunes.
 
 ---
@@ -137,7 +153,7 @@ Pylint es especialmente valioso en proyectos Python medianos y grandes donde la 
 
 ### 3. Flake8
 
-[Flake8](https://flake8.pycqa.org/) es una herramienta de análisis estático para Python que combina PyFlakes, pycodestyle (anteriormente pep8) y Ned Batchelder's McCabe script. Se enfoca en detectar errores de sintaxis, violaciones de estilo PEP 8, imports no utilizados y problemas de complejidad ciclomática. Es conocida por su velocidad y simplicidad, siendo ampliamente adoptada en la comunidad Python.
+[Flake8](https://flake8.pycqa.org/) es una herramienta de análisis estático para Python que combina PyFlakes, pycodestyle (anteriormente pep8) y Ned Batchelder's McCabe script. Se enfoca en detectar errores de sintaxis, violaciones de estilo PEP 8, imports no utilizados y problemas de complejidad ciclomática. Es conocida por su velocidad y simplicidad, y actualmente es altamente utilizada entre los desarrolladores.
 
 En este proyecto se utilizó **Flake8** con configuración estándar para analizar el backend desarrollado en **FastAPI**, identificando errores críticos de imports faltantes y problemas de formato.
 
@@ -164,7 +180,7 @@ En este proyecto se utilizó **Flake8** con configuración estándar para analiz
 
 - **Archivos**: 24 archivos con 92 ocurrencias
 - **Descripción**: Falta de separación adecuada (2 líneas en blanco) entre funciones y clases según PEP 8.
-- **Importancia de abordarlo**: La falta de separación visual reduce significativamente la legibilidad, especialmente en archivos largos como `crud_workout.py` (472 líneas), generando un "muro de texto" difícil de navegar.
+- **Importancia de abordarlo**: La falta de separación visual reduce significativamente la legibilidad, especialmente en archivos largos como `crud_workout.py` (472 líneas), en el cual se dificulta la navegación.
 
 #### 3. `W293: blank line contains whitespace`
 
@@ -199,11 +215,10 @@ En este proyecto se utilizó **Flake8** con configuración estándar para analiz
 #### Acerca de la relevancia de Flake8 en este proyecto
 
 - **Detección de errores críticos**: Flake8 identificó un error F821 que causaba fallos funcionales en endpoints críticos de la aplicación.
-- **Mantenimiento de estándares**: Detectó 215 violaciones de formato que impactaban la legibilidad y consistencia del código.
-- **Complemento ideal**: Su enfoque en errores de sintaxis y formato lo convierte en un complemento perfecto para herramientas más complejas como Pylint.
+- **Mantenimiento de estándares**: Se detectaron 215 violaciones de formato que impactaban la legibilidad y consistencia del código.
+- **Buen complemento para otras herramientas**: Su enfoque en errores de sintaxis y formato lo convierte en un complemento perfecto para herramientas más complejas como Pylint.
 
 #### Aplicabilidad en otros proyectos
 
-Flake8 es una herramienta fundamental para cualquier proyecto Python, desde scripts simples hasta aplicaciones empresariales. Su velocidad y facilidad de configuración la convierten en una opción ideal para CI/CD pipelines y desarrollo local. Es especialmente valiosa para equipos que buscan mantener consistencia de formato sin la complejidad de herramientas más avanzadas.
-
+Flake8 es una herramienta fundamental para cualquier proyecto Python, desde scripts simples hasta aplicaciones más complejas (como las de grandes empresas). Su velocidad y facilidad de configuración la convierten en una opción ideal para CI/CD pipelines y desarrollo local. Es especialmente valiosa para equipos que buscan mantener consistencia de formato con un enfoque sencillo.
 ---
