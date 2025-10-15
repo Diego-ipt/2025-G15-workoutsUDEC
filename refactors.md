@@ -152,7 +152,7 @@ if not user.is_active(user_obj):
     raise HTTPException(...)
 ```
 
-Esta micro-refactorización mejora la claridad del código sin alterar su comportamiento, estableciendo un patrón de validación más limpio y fácil de entender.
+Esta refactorización mejora la claridad del código sin alterar su comportamiento, estableciendo un patrón de validación más limpio y fácil de entender.
 
 ---
 
@@ -196,3 +196,114 @@ class UserInDBBase(UserBase, BaseInDB):
 Esta refactorización eliminó por completo el código duplicado, centralizando la lógica común en un único lugar. Ahora, el sistema es mucho más mantenible, escalable y robusto, ya que cualquier cambio en los campos base se propagará automáticamente a todas las entidades que hereden de `BaseInDB`.
 
 ---
+
+### **Refactorizaciones con ESLint para Typescript**
+
+
+---
+
+#### **8. Limpieza General de Código Redundante**
+
+El análisis inicial reveló instancias de código que, aunque no causaban errores, añadían ruido y complejidad innecesaria. ESLint detectó principalmente dos patrones:
+*   **Bloques `catch` inútiles (`no-useless-catch`):** Estructuras `try-catch` que simplemente capturaban un error para volver a lanzarlo sin añadir ninguna lógica de manejo, lo cual es redundante.
+*   **Variables no utilizadas (`no-unused-vars`):** Declaraciones de variables que nunca se leían, representando código muerto que dificulta la comprensión.
+
+La solución consistió en una limpieza sistemática de estos elementos, resultando en un código más conciso y fácil de seguir, donde cada línea tiene un propósito claro.
+
+---
+
+#### **9. Implementación de un Manejo de Errores Robusto y con Tipado Seguro**
+
+Un punto importante en cualquier aplicación frontend es la comunicación con la API. ESLint señaló un riesgo en la forma en que se manejaban los errores de las llamadas por el uso de `catch (error: any)`.
+
+**Problema y su Impacto**
+
+El uso del tipo `any` para los errores anulaba por completo la seguridad de tipos de TypeScript. Esto creaba un riesgo significativo de que la aplicación se bloqueara en producción si la API devolvía un error con una estructura inesperada (por ejemplo, un error de red en lugar de un error de validación). Además, al no poder inferir la estructura del error, a menudo se mostraban mensajes genéricos que ocultaban la causa real del problema, dificultando enormemente la depuración.
+
+**Solución Implementada**
+
+Se adoptó un enfoque de **guardas de tipo (Type Guarding)** para manejar los errores de forma segura. En todos los bloques `catch`, se reemplazó el tipado inseguro por una verificación explícita usando los errores de la biblioteca `Axios`.
+
+**Antes (Inseguro):**
+```typescript
+} catch (error: any) {
+  setError(error.response?.data?.detail || 'Login failed');
+}
+```
+
+**Después (Robusto y con tipado seguro):**
+```typescript
+import { isAxiosError } from 'axios';
+
+// ...
+
+} catch (error) { // El tipo por defecto ahora es 'unknown', que es más seguro
+  let errorMessage = 'An unexpected error occurred';
+
+  if (isAxiosError(error)) {
+    // Dentro de este bloque, TypeScript sabe que 'error' es un AxiosError
+    // y podemos acceder a sus propiedades de forma segura.
+    errorMessage = error.response?.data?.detail || 'An error occurred with the request';
+  } else if (error instanceof Error) {
+    // Como fallback, capturamos otros errores genéricos de JavaScript.
+    errorMessage = error.message;
+  }
+
+  setError(errorMessage);
+}
+```
+Esta refactorización garantiza que la aplicación pueda manejar diferentes tipos de errores sin riesgo de fallos inesperados, proporcionando mensajes más precisos al usuario y facilitando un diagnóstico rápido para los desarrolladores.
+
+---
+
+#### **10. Reestructuración Modular de Contextos para Mejorar la Experiencia de Desarrollo**
+
+ESLint detectó una violación de la regla `react-refresh/only-export-components` en los archivos que definían los contextos de React (`AuthContext` y `ActiveWorkoutContext`). Esta regla es crucial para el funcionamiento de **Fast Refresh**, una característica que acelera el desarrollo al actualizar la UI sin perder el estado de los componentes.
+
+**Problema y su Impacto**
+
+Los archivos de contexto exportaban simultáneamente el contexto, el proveedor, el hook personalizado y los tipos, todo desde un único módulo. Esto no solo rompía Fast Refresh, degradando la experiencia de desarrollo, sino que también creaba un alto acoplamiento y violaba el principio de responsabilidad única, haciendo el código más difícil de mantener y escalar.
+
+**Solución Implementada**
+
+Se aplicó una **separación modular por responsabilidad**, dividiendo la lógica de cada contexto en archivos especializados:
+
+| Archivo | Responsabilidad Principal |
+| :--- | :--- |
+| `Context.ts` | Define y exporta el contexto (`createContext`). |
+| `Provider.tsx` | Define y exporta el componente proveedor. |
+| `useContextHook.ts` | Define y exporta el hook personalizado (`useAuth`, etc.). |
+| `ContextType.ts` | Define las interfaces y tipos del contexto. |
+
+Esta reestructuración resolvió por completo los conflictos con Fast Refresh, permitiendo un ciclo de desarrollo más fluido. Además, ahora cada parte del contexto es más fácil de entender, probar y reutilizar de forma independiente, sentando una base arquitectónica mucho más sólida.
+
+---
+
+#### **11. Fortalecimiento de la Integridad de Datos mediante Tipado Explícito en Formularios**
+
+Finalmente, se identificó el uso del tipo `any` en la gestión de datos de formularios críticos, como la actualización del perfil de usuario (`ProfileForm.tsx`) y el seguimiento de series de ejercicios (`SetTracker.tsx`).
+
+**Problema y su Impacto**
+
+Utilizar `any` para los objetos de datos que se envían al backend es una práctica peligrosa. Abre la puerta a errores silenciosos, como enviar campos con nombres incorrectos o con un tipo de dato erróneo, lo que podría llevar a la pérdida de datos del usuario o a fallos inesperados en la API. En esencia, se perdía el "contrato" de tipos entre el frontend y el backend.
+
+**Solución Implementada**
+
+La solución fue reemplazar `any` por las **interfaces TypeScript específicas** que ya estaban definidas en el proyecto (`UserUpdate` y `ExerciseSetUpdate`).
+
+**Antes (Sin seguridad de tipos):**
+```typescript
+const updateData: any = {};
+// ...
+authService.updateUser(userId, updateData);
+```
+
+**Después (Con seguridad de tipos):**
+```typescript
+import { UserUpdate } from '@/types/auth';
+// ...
+const updateData: UserUpdate = {};
+// ...
+authService.updateUser(userId, updateData);
+```
+Al aplicar un tipado estricto, ahora el compilador de TypeScript y el autocompletado del editor ayudan a prevenir errores antes de que el código llegue al navegador. Esta refactorización asegura que los datos enviados al backend siempre cumplan con la estructura esperada.
