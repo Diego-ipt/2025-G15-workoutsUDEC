@@ -83,7 +83,7 @@ En este proyecto se utilizó **ESLint v9+** con configuración moderna basada en
 #### Aplicabilidad en otros proyectos
 
 ESLint es altamente adaptable a cualquier proyecto JavaScript/TypeScript, incluyendo stacks con React, Vue, Node.js o Next.js. Su integración con editores y pipelines lo convierte en una herramienta esencial para mantener estándares de calidad.
----
+
 
 ### 2. Pylint
 
@@ -221,4 +221,4 @@ En este proyecto se utilizó **Flake8** con configuración estándar para analiz
 #### Aplicabilidad en otros proyectos
 
 Flake8 es una herramienta fundamental para cualquier proyecto Python, desde scripts simples hasta aplicaciones más complejas (como las de grandes empresas). Su velocidad y facilidad de configuración la convierten en una opción ideal para CI/CD pipelines y desarrollo local. Es especialmente valiosa para equipos que buscan mantener consistencia de formato con un enfoque sencillo.
----
+
