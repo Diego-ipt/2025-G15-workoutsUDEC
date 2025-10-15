@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { useActiveWorkout } from '../../context/ActiveWorkoutProvider';
 import { exerciseService } from '../../services/exerciseService';
 import type { Exercise } from '../../types/exercise';
 import { ExerciseType } from '../../types/exercise';

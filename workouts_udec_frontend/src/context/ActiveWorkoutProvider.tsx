@@ -1,5 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { workoutService } from '../services/workoutService';
+import { AxiosError, isAxiosError } from 'axios';
+import { ActiveWorkoutContext } from './ActiveWorkoutContext';
+
 import type {
   Workout,
   WorkoutCreate,
@@ -7,48 +11,9 @@ import type {
   ExerciseSetCreate,
   ExerciseSetUpdate
 } from '../types/workout';
-import { workoutService } from '../services/workoutService';
-import { AxiosError, isAxiosError } from 'axios';
 
-interface ActiveWorkoutContextType {
-  // State
-  activeWorkout: Workout | null;
-  loading: boolean;
-  error: string | null;
-  workoutTimer: number; // seconds since workout started
-  
-  // Actions
-  startWorkout: (workoutData: WorkoutCreate) => Promise<void>;
-  startWorkoutFromTemplate: (templateId: number, workoutData?: Partial<WorkoutCreate>) => Promise<void>;
-  completeWorkout: () => Promise<void>;
-  cancelWorkout: () => Promise<void>;
-  updateWorkoutNotes: (notes: string) => Promise<void>;
-  
-  // Exercise management
-  addExerciseToWorkout: (exerciseData: WorkoutExerciseCreate) => Promise<void>;
-  removeExerciseFromWorkout: (workoutExerciseId: number) => Promise<void>;
-  updateExerciseNotes: (workoutExerciseId: number, notes: string) => Promise<void>;
-  
-  // Set management
-  addSet: (workoutExerciseId: number, setData: ExerciseSetCreate) => Promise<void>;
-  updateSet: (workoutExerciseId: number, setId: number, setData: ExerciseSetUpdate) => Promise<void>;
-  deleteSet: (workoutExerciseId: number, setId: number) => Promise<void>;
-  completeSet: (workoutExerciseId: number, setId: number) => Promise<void>;
-  
-  // Utility
-  refreshActiveWorkout: () => Promise<void>;
-  clearError: () => void;
-}
 
-const ActiveWorkoutContext = createContext<ActiveWorkoutContextType | undefined>(undefined);
-
-export const useActiveWorkout = (): ActiveWorkoutContextType => {
-  const context = useContext(ActiveWorkoutContext);
-  if (!context) {
-    throw new Error('useActiveWorkout must be used within an ActiveWorkoutProvider');
-  }
-  return context;
-};
+import type { ActiveWorkoutContextType } from './ActiveWorkoutContextType';
 
 interface ActiveWorkoutProviderProps {
   children: ReactNode;

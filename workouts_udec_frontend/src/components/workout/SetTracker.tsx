@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { useActiveWorkout } from '../../context/ActiveWorkoutProvider';
 import type { ExerciseSet } from '../../types/workout';
 import { ExerciseType } from '../../types/exercise';
 

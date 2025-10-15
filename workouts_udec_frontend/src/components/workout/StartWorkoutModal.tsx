@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { useActiveWorkout } from '../../context/ActiveWorkoutProvider';
 import { workoutService } from '../../services/workoutService';
 import type { WorkoutTemplate } from '../../types/workout';
 import { isAxiosError } from 'axios';
