@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthProvider';
+import { useAuth } from '../../context/useAuth';
 import { authService } from '../../services/authService';
 import { isAxiosError } from 'axios';
+import type { UserUpdate } from '../../types/auth';
+
 
 const ProfileForm: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -77,7 +79,8 @@ const ProfileForm: React.FC = () => {
       }
 
       // Prepare update data
-      const updateData: any = {
+
+      const updateData: UserUpdate = {
         username: formData.username,
         email: formData.email,
         full_name: formData.full_name || undefined,

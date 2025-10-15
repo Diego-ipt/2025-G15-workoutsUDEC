@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useActiveWorkout } from '../../context/ActiveWorkoutProvider';
+import { useActiveWorkout } from '../../context/useActiveWorkout';
 import type { ExerciseSet } from '../../types/workout';
 import { ExerciseType } from '../../types/exercise';
+import type { ExerciseSetUpdate } from '../../types/workout';
 
 interface SetTrackerProps {
   set: ExerciseSet;
@@ -42,7 +43,7 @@ const SetTracker: React.FC<SetTrackerProps> = ({ set, workoutExerciseId, exercis
   }, [weight, reps, durationMinutes, durationSeconds, restMinutes, restSeconds, notes]);
 
   const handleAutoSave = async () => {
-    const updates: any = {};
+    const updates: ExerciseSetUpdate = {};
     let hasChanges = false;
 
     // Weight-based fields
