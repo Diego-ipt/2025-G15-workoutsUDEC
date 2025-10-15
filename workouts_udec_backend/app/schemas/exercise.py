@@ -1,9 +1,9 @@
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
 
 from app.models.exercise import ExerciseType
+from app.schemas.base import BaseInDB
 
 
 class ExerciseBase(BaseModel):
@@ -30,13 +30,8 @@ class ExerciseUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-class ExerciseInDBBase(ExerciseBase):
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+class ExerciseInDBBase(ExerciseBase, BaseInDB):
+    pass
 
 
 class Exercise(ExerciseInDBBase):

@@ -285,3 +285,111 @@ if not user.is_active(user_obj):    # ✅ if simple y claro
 5. **Facilita debugging:** Cada validación es independiente, simplificando el razonamiento sobre el flujo.
 
 ---
+
+## 🏗️ Refactorización #4: Eliminación de Código Duplicado en Schemas (R0801)
+
+### Contexto
+
+Durante el análisis con Pylint, se detectó **código duplicado significativo** entre los schemas de base de datos. Las clases `ExerciseInDBBase` y `UserInDBBase` compartían un patrón idéntico de campos comunes (id, timestamps) y configuración, violando el principio DRY (Don't Repeat Yourself) y generando una deuda técnica arquitectónica.
+
+### Problema Detectado
+
+**Error Pylint:**
+
+```
+app/schemas/__init__.py:1:0: R0801: Similar lines in 2 files
+==app.schemas.exercise:[33:41]
+==app.schemas.user:[25:33]
+    id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+```
+
+**Código problemático:**
+
+```python
+# En app/schemas/exercise.py:
+class ExerciseInDBBase(ExerciseBase):
+    id: Optional[int] = None                    # ❌ Duplicado
+    created_at: Optional[datetime] = None       # ❌ Duplicado
+    updated_at: Optional[datetime] = None       # ❌ Duplicado
+
+    class Config:                               # ❌ Duplicado
+        from_attributes = True                  # ❌ Duplicado
+
+# En app/schemas/user.py:
+class UserInDBBase(UserBase):
+    id: Optional[int] = None                    # ❌ Duplicado
+    created_at: Optional[datetime] = None       # ❌ Duplicado
+    updated_at: Optional[datetime] = None       # ❌ Duplicado
+
+    class Config:                               # ❌ Duplicado
+        from_attributes = True                  # ❌ Duplicado
+```
+
+#### Impacto del Problema
+
+1. **Violación DRY:** El mismo patrón de campos de BD se repite en múltiples schemas, aumentando la superficie de mantenimiento.
+2. **Inconsistencia potencial:** Cambios en campos comunes requieren modificaciones en múltiples archivos, aumentando el riesgo de errores.
+3. **Escalabilidad comprometida:** Cada nuevo schema de BD requiere copiar manualmente el mismo boilerplate de 9 líneas.
+
+### Solución Implementada
+
+**Tipo de Refactorización:** Extract Superclass + Multiple Inheritance - Creación de clase base común con herencia múltiple.
+
+**Paso 1: Creación de BaseInDB**
+
+```python
+# NUEVO ARCHIVO: app/schemas/base.py
+from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel
+
+class BaseInDB(BaseModel):
+    """Base class for all database schema models with common fields."""
+    id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+```
+
+**Paso 2: Refactorización con herencia múltiple**
+
+```python
+# DESPUÉS - app/schemas/exercise.py:
+from app.schemas.base import BaseInDB
+
+class ExerciseInDBBase(ExerciseBase, BaseInDB):  # ✅ Herencia múltiple
+    pass  # ✅ Sin código duplicado
+
+# DESPUÉS - app/schemas/user.py:
+from app.schemas.base import BaseInDB
+
+class UserInDBBase(UserBase, BaseInDB):          # ✅ Herencia múltiple
+    pass  # ✅ Sin código duplicado
+```
+
+**Archivos modificados:**
+
+- `app/schemas/base.py` - Nuevo archivo (15 líneas)
+- `app/schemas/exercise.py` - Refactorizado (7 líneas eliminadas, import agregado)
+- `app/schemas/user.py` - Refactorizado (7 líneas eliminadas, import agregado)
+
+#### Arquitectura Resultante
+
+```
+BaseInDB (nueva clase base)
+    ├── ExerciseInDBBase(ExerciseBase, BaseInDB) ← Herencia múltiple
+    └── UserInDBBase(UserBase, BaseInDB)         ← Herencia múltiple
+```
+
+### Ventajas de la Solución
+
+1. **DRY respetado:** Un único lugar para definir campos comunes de base de datos, eliminando 14 líneas duplicadas.
+2. **Mantenibilidad mejorada:** Cambios en campos base se propagan automáticamente a todos los schemas derivados.
+3. **Extensibilidad garantizada:** Nuevos schemas pueden heredar de `BaseInDB` sin duplicar código.

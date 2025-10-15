@@ -1,7 +1,8 @@
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
+
+from app.schemas.base import BaseInDB
 
 
 class UserBase(BaseModel):
@@ -22,13 +23,8 @@ class UserUpdate(UserBase):
     password: Optional[str] = None
 
 
-class UserInDBBase(UserBase):
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+class UserInDBBase(UserBase, BaseInDB):
+    pass
 
 
 class User(UserInDBBase):
