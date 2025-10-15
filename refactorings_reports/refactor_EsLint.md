@@ -85,3 +85,71 @@ import { isAxiosError } from 'axios';
   setError(errorMessage);
 }
 ```
+
+
+## Refactorización #3: Manejo de contextos `ActiveWorkout` y `AuthContext`
+
+### Contexto del problema
+
+El proyecto de workouts_udec utiliza React con TypeScript y ESLint para asegurar calidad de código y compatibilidad con Fast Refresh. Durante el desarrollo de los contextos `ActiveWorkoutContext` y `AuthContext`, se detectaron errores relacionados con la regla ESLint `react-refresh/only-export-components`, la cual impide que Fast Refresh funcione correctamente si un archivo exporta algo distinto a componentes o hooks.
+
+Ambos contextos estaban definidos en archivos únicos que exportaban simultáneamente:
+
+- El contexto (`createContext`)
+- El hook personalizado (`useContext`)
+- El componente proveedor (`React.FC`)
+- Tipos TypeScript (solo en `ActiveWorkoutContext`)
+
+Esto generaba mayormente conflictos con Fast Refresh, además de una pobre lógica de contexto que dificulta el mantenimiento de la aplicación.
+
+---
+
+### Motivos de la refactorización
+
+#### Problemas detectados:
+
+- **Violación de la regla `react-refresh/only-export-components`**: impide que Fast Refresh funcione si el archivo exporta algo que no sea un componente.
+- **Acoplamiento excesivo**: lógica de contexto, hook, proveedor y tipos estaban mezclados en un solo archivo, dificultando el mantenimiento.
+
+---
+
+### Solución propuesta
+
+#### Tipo de refactorización: **separación modular por responsabilidad**
+
+Se aplicó una estrategia de separación en archivos independientes para cada responsabilidad:
+
+| Archivo                        | Responsabilidad principal                          |
+|-------------------------------|----------------------------------------------------|
+| `Context.ts`                  | Define y exporta el contexto (`createContext`)     |
+| `Provider.tsx`                | Define el componente proveedor (`React.FC`)        |
+| `useContextHook.ts`           | Define el hook personalizado (`useX`)              |
+| `ContextType.ts` (opcional)   | Define el tipo de contexto (`interface`)           |
+
+### Correcciones adicionales:
+
+- Se corrigieron los nombres de archivos (`ActiveWorkoutProvider.tsx` en lugar de `ActiveWorkoutContext.tsx`). De esta forma cada archivo representa lo que realmente hace.
+- Se eliminaron imports no utilizados (como por ejemplo `useContext` en archivos donde no se usa).
+
+---
+
+### Ventajas de la solución para el proyecto
+
+#### Compatibilidad con Fast Refresh
+
+Los archivos ahora cumplen con la regla ESLint `react-refresh/only-export-components`, lo que permite Fast Refresh sin errores.
+
+#### Mejora en la mantenibilidad
+
+Cada archivo tiene una única responsabilidad, lo que facilita la lectura, el testing y la colaboración en equipo.
+
+#### Escalabilidad y reutilización
+
+Los hooks (`useActiveWorkout`, `useAuth`) pueden ser usados en cualquier componente sin duplicar lógica.  
+Los tipos (`ContextType`) pueden ser reutilizados en servicios, validaciones o pruebas.
+
+
+Con lo anterior, la refactorización de los context `ActiveWorkout` y `AuthContext` mejora directamente la estabilidad y fluidez de la experiencia del usuario en la aplicación de seguimiento de entrenamientos. Al separar la lógica del proveedor, el contexto, los hooks y los tipos en archivos independientes, se resolvieron errores que afectaban la recarga en caliente (Fast Refresh), lo que permite que el estado del entrenamiento activo y la sesión del usuario se mantengan intactos durante el desarrollo. Esto garantiza que funciones críticas como el temporizador, el registro de ejercicios y la autenticación se comporten de forma consistente, sin interrupciones ni pérdidas de datos. En el contexto de una app centrada en el progreso físico del usuario, esta refactorización asegura que la interfaz sea más confiable, rápida y preparada para escalar sin comprometer la calidad de la experiencia.
+
+---
+
