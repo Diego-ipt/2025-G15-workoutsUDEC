@@ -26,7 +26,7 @@ def login_access_token(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password"
         )
-    elif not user.is_active(user_obj):
+    if not user.is_active(user_obj):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user"

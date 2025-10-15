@@ -32,11 +32,11 @@ def get_current_user(
             algorithms=[
                 security.ALGORITHM])
         user_id: int = payload.get("sub")
-    except (jwt.JWTError, ValidationError):
+    except (jwt.JWTError, ValidationError) as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
-        )
+        ) from e
     user_obj = user.get(db, id=user_id)
     if not user_obj:
         raise HTTPException(status_code=404, detail="User not found")
