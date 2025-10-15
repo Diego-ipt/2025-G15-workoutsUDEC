@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthProvider';
 import type { User } from '../../types/auth';
 
 interface UserTableProps {

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { ActiveWorkoutProvider } from './context/ActiveWorkoutContext';
+import { AuthProvider } from './context/AuthProvider';
+import { ActiveWorkoutProvider } from './context/ActiveWorkoutProvider';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';

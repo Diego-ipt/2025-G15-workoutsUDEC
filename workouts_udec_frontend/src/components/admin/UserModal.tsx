@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthProvider';
 import type { User, UserCreate } from '../../types/auth';
 import { isAxiosError } from 'axios';
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useActiveWorkout } from '../context/ActiveWorkoutContext';
+import { useAuth } from '../context/AuthProvider';
+import { useActiveWorkout } from '../context/ActiveWorkoutProvider';
 import { workoutService } from '../services/workoutService';
 import type { Workout } from '../types/workout';
 import Layout from '../components/ui/Layout';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useActiveWorkout } from '../context/ActiveWorkoutContext';
+import { useActiveWorkout } from '../context/ActiveWorkoutProvider';
 import Layout from '../components/ui/Layout';
 import StartWorkoutModal from '../components/workout/StartWorkoutModal';
 import ExerciseSelector from '../components/workout/ExerciseSelector';
