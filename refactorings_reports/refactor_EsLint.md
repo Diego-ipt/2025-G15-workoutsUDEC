@@ -153,3 +153,66 @@ Con lo anterior, la refactorización de los context `ActiveWorkout` y `AuthConte
 
 ---
 
+## Refactorización #4: Eliminación de `any` en formularios y actualizaciones de sets
+
+### Contexto del problema
+
+El proyecto `workouts_udec` utiliza React con TypeScript y ESLint para garantizar calidad de código, seguridad de tipos y una experiencia de desarrollo robusta. Durante la implementación de `ProfileForm.tsx` y `SetTracker.tsx`, se detectaron usos explícitos del tipo `any` en objetos de actualización (`updateData`, `updates`), lo que viola las reglas de tipado estricto (`noImplicitAny`) y compromete la integridad del sistema.
+
+Estos componentes están directamente relacionados con funcionalidades sensibles para el usuario:
+
+- `ProfileForm.tsx`: permite modificar datos personales y credenciales.
+- `SetTracker.tsx`: gestiona el progreso de ejercicios dentro de un entrenamiento activo.
+
+El uso de `any` en estos contextos puede derivar en errores silenciosos, pérdida de datos o fallos en la comunicación con el backend.
+
+---
+
+### Motivos de la refactorización
+
+#### Problemas detectados:
+
+- **Violación de `noImplicitAny`**: uso de `any` en objetos de actualización sin tipado explícito.
+- **Falta de validación de propiedades**: sin tipos definidos, es posible pasar campos mal escritos o no esperados.
+- **Desalineación con los servicios del backend**: los objetos enviados no garantizan cumplir con las interfaces esperadas por `authService` o `updateSet`.
+
+---
+
+### Solución propuesta
+
+#### Tipo de refactorización: **tipado explícito con interfaces reutilizables**
+
+Se reemplazó el uso de `any` por interfaces ya definidas en `types/auth.ts` y `types/workout.ts`:
+
+| Componente         | Tipo aplicado           | Archivo fuente             |
+|--------------------|-------------------------|----------------------------|
+| `ProfileForm.tsx`  | `UserUpdate`            | `types/auth.ts`            |
+| `SetTracker.tsx`   | `ExerciseSetUpdate`     | `types/workout.ts`         |
+
+### Correcciones adicionales:
+
+- Se agregaron imports explícitos de los tipos en cada componente.
+- Se validó que los objetos de actualización (`updateData`, `updates`) respeten las propiedades definidas en sus interfaces.
+
+---
+
+### Ventajas de la solución para el proyecto
+
+#### Seguridad de tipos
+
+El uso de interfaces garantiza que los datos enviados al backend cumplan con la estructura esperada, reduciendo errores en tiempo de ejecución.
+
+#### Mejora en la mantenibilidad
+
+Los tipos definidos en `types/` pueden ser reutilizados en servicios, validaciones, formularios y pruebas, lo que facilita la evolución del sistema.
+
+#### Experiencia del usuario más confiable
+
+Al asegurar que los datos del perfil y del entrenamiento se actualicen correctamente, se evita la pérdida de información y se mejora la estabilidad de funciones críticas como el seguimiento de sets y la edición de perfil.
+
+---
+
+Con lo anterior, la refactorización de `ProfileForm.tsx` y `SetTracker.tsx` fortalece la integridad del sistema de entrenamiento y autenticación en la aplicación. Al reemplazar `any` por tipos explícitos, se garantiza que las actualizaciones de datos personales y de progreso físico se realicen de forma segura, validada y alineada con la lógica del backend. En una app centrada en el seguimiento detallado del rendimiento del usuario, esta mejora asegura que cada interacción sea precisa y cobfiable.
+
+
+
