@@ -6,8 +6,8 @@ Colección completa de tests de Postman para los endpoints de **Autenticación**
 
 Este directorio contiene:
 
-- **`auth.postman_collection.json`**: Tests de autenticación (5 tests, 16 assertions)
-- **`admin.postman_collection.json`**: Tests de administración (25 tests, 56 assertions)
+- **`auth.postman_collection.json`**: Tests de autenticación (5 tests, 23 assertions)
+- **`admin.postman_collection.json`**: Tests de administración (25 tests, 87 assertions)
 - **`postman_environment.json`**: Variables de entorno pre-configuradas
 - **`run_tests.ps1`**: Script de PowerShell para automatización (opcional)
 
@@ -15,27 +15,31 @@ Este directorio contiene:
 
 ### 🔐 Autenticación (auth.postman_collection.json)
 
-- ✓ Login exitoso con credenciales válidas
-- ✓ Login con credenciales incorrectas
-- ✓ Login con email no existente
+**5 tests, 23 assertions:**
+
+- ✓ Login exitoso con credenciales válidas (con validación de performance <2000ms)
+- ✓ Login con credenciales incorrectas (con validación de performance)
+- ✓ Login con email no existente (con validación de performance)
 - ✓ Validación de campos vacíos (422)
 - ✓ Validación sin body (422)
 
 ### 👨‍💼 Administración (admin.postman_collection.json)
 
+**25 tests, 87 assertions (incluye performance testing):**
+
 **User Management (12 tests):**
 
-- ✓ Listar usuarios con paginación
-- ✓ Crear, actualizar y eliminar usuarios
-- ✓ Validación de email/username únicos
+- ✓ Listar usuarios con paginación (con performance)
+- ✓ Crear, actualizar y eliminar usuarios (con performance)
+- ✓ Validación de email/username únicos (con performance)
 - ✓ Manejo de errores (404, 400, 422)
-- ✓ Tests sin autenticación (403)
+- ✓ Tests sin autenticación (403 Forbidden)
 
 **Workout Template Management (13 tests):**
 
-- ✓ CRUD completo de plantillas de entrenamiento
-- ✓ Agregar/remover ejercicios de plantillas
-- ✓ Validación de datos inválidos
+- ✓ CRUD completo de plantillas de entrenamiento (con performance)
+- ✓ Agregar/remover ejercicios de plantillas (con performance condicional)
+- ✓ Validación de datos inválidos (200 OK - backend acepta strings vacíos)
 - ✓ Manejo de errores (404, 422)
 
 ## 🚀 Pre-requisitos
@@ -105,14 +109,14 @@ npm install -g newman
 1. Click derecho en **"Workout Tracker API - Authentication Tests"**
 2. Selecciona **"Run collection"**
 3. En el Runner, click **"Run Workout Tracker API - Authentication Tests"**
-4. Verifica: **16/16 tests passed** ✅
+4. Verifica: **23/23 tests passed** ✅
 
 #### Paso 2: Tests de Administración
 
 1. Click derecho en **"Workout Tracker API - Admin Tests"**
 2. Selecciona **"Run collection"**
 3. En el Runner, click **"Run Workout Tracker API - Admin Tests"**
-4. Verifica: **56/56 tests passed**
+4. Verifica: **87/87 tests passed** ✅
 
 ## 💻 Opción B: Ejecutar con Newman (CLI)
 
@@ -134,7 +138,7 @@ newman run auth.postman_collection.json
 ┌─────────────────────────┬────────────────────┬───────────────────┐
 │              iterations │                  1 │                 0 │
 │                requests │                  5 │                 0 │
-│              assertions │                 16 │                 0 │
+│              assertions │                 23 │                 0 │
 └─────────────────────────┴────────────────────┴───────────────────┘
 ```
 
@@ -150,7 +154,7 @@ newman run admin.postman_collection.json --environment postman_environment.json
 ┌─────────────────────────┬───────────────────┬──────────────────┐
 │              iterations │                 1 │                0 │
 │                requests │                25 │                0 │
-│              assertions │                56 │                0 │
+│              assertions │                87 │                0 │
 └─────────────────────────┴───────────────────┴──────────────────┘
 ```
 
@@ -164,9 +168,6 @@ newman run auth.postman_collection.json; newman run admin.postman_collection.jso
 newman run auth.postman_collection.json && newman run admin.postman_collection.json --environment postman_environment.json
 ```
 
----
-
-## 📝 Notas Adicionales
 
 ### Variables de entorno
 
