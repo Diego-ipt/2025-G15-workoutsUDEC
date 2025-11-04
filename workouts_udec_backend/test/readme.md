@@ -1,6 +1,6 @@
 # 🧪 Tests de API - Workout Tracker
 
-Colección completa de tests de Postman para los endpoints de **Autenticación** y **Administración** de la API Workout Tracker.
+Colección completa de tests de Postman para los endpoints de **Autenticación**, **Administración** y **Usuarios Regulares** de la API Workout Tracker.
 
 ## 📋 Contenido
 
@@ -8,6 +8,7 @@ Este directorio contiene:
 
 - **`auth.postman_collection.json`**: Tests de autenticación (5 tests, 23 assertions)
 - **`admin.postman_collection.json`**: Tests de administración (25 tests, 87 assertions)
+- **`user.postman_collection.json`**: Tests de usuario regular (17 tests, 62 assertions)
 - **`postman_environment.json`**: Variables de entorno pre-configuradas
 - **`run_tests.ps1`**: Script de PowerShell para automatización (opcional)
 
@@ -41,6 +42,37 @@ Este directorio contiene:
 - ✓ Agregar/remover ejercicios de plantillas (con performance condicional)
 - ✓ Validación de datos inválidos (200 OK - backend acepta strings vacíos)
 - ✓ Manejo de errores (404, 422)
+
+### 👤 Usuario Regular (user.postman_collection.json)
+
+**17 tests, 62 assertions (incluye performance testing):**
+
+**Authentication (1 test):**
+- ✓ Login exitoso de usuario regular (con performance)
+
+**User Profile (3 tests):**
+- ✓ Obtener perfil propio (GET /users/me)
+- ✓ Actualizar perfil propio (PUT /users/me)
+- ✓ Acceso sin autenticación (403 Forbidden)
+
+**Exercises (3 tests):**
+- ✓ Listar ejercicios disponibles
+- ✓ Obtener ejercicio por ID
+- ✓ Validación de ejercicio inexistente (404)
+
+**Workout Templates (1 test):**
+- ✓ Listar templates públicos
+
+**Workouts Management (8 tests):**
+- ✓ CRUD completo de workouts propios (con performance)
+- ✓ Obtener workouts del usuario
+- ✓ Crear workout (solo 1 activo permitido)
+- ✓ Obtener workout activo
+- ✓ Actualizar y completar workout
+- ✓ Validación de permisos y errores
+
+**Access Control (1 test):**
+- ✓ Usuario regular no puede acceder a endpoints admin (403 Forbidden)
 
 ## 🚀 Pre-requisitos
 
@@ -87,9 +119,10 @@ npm install -g newman
 
 1. Abre Postman
 2. Click en **"Import"** (esquina superior izquierda)
-3. Arrastra o selecciona estos 3 archivos:
+3. Arrastra o selecciona estos 4 archivos:
    - `auth.postman_collection.json`
    - `admin.postman_collection.json`
+   - `user.postman_collection.json`
    - `postman_environment.json`
 
 ### 2️⃣ Configurar el environment
@@ -117,6 +150,13 @@ npm install -g newman
 2. Selecciona **"Run collection"**
 3. En el Runner, click **"Run Workout Tracker API - Admin Tests"**
 4. Verifica: **87/87 tests passed** ✅
+
+#### Paso 3: Tests de Usuario Regular
+
+1. Click derecho en **"Workout Tracker API - Regular User Tests"**
+2. Selecciona **"Run collection"**
+3. En el Runner, click **"Run Workout Tracker API - Regular User Tests"**
+4. Verifica: **62/62 tests passed** ✅
 
 ## 💻 Opción B: Ejecutar con Newman (CLI)
 
@@ -158,31 +198,60 @@ newman run admin.postman_collection.json --environment postman_environment.json
 └─────────────────────────┴───────────────────┴──────────────────┘
 ```
 
+### 3️⃣ Ejecutar tests de Usuario Regular
+
+```bash
+newman run user.postman_collection.json --environment postman_environment.json
+```
+
+**Resultado esperado:**
+
+```
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│              iterations │                 1 │                0 │
+│                requests │                17 │                0 │
+│              assertions │                62 │                0 │
+└─────────────────────────┴───────────────────┴──────────────────┘
+```
+
 ### 4️⃣ Ejecutar todos los tests juntos
 
 ```bash
 # Windows PowerShell
-newman run auth.postman_collection.json; newman run admin.postman_collection.json --environment postman_environment.json
+newman run auth.postman_collection.json; newman run admin.postman_collection.json --environment postman_environment.json; newman run user.postman_collection.json --environment postman_environment.json
 
 # Linux/Mac
-newman run auth.postman_collection.json && newman run admin.postman_collection.json --environment postman_environment.json
+newman run auth.postman_collection.json && newman run admin.postman_collection.json --environment postman_environment.json && newman run user.postman_collection.json --environment postman_environment.json
 ```
 
+**Total esperado: 47 requests, 172 assertions** ✅
+
+---
+
+## 📝 Notas Adicionales
 
 ### Variables de entorno
 
 El archivo `postman_environment.json` contiene:
 
 - **`base_url`**: URL base de la API (`http://localhost:8001`)
-- **`admin_token`**: Token JWT (se actualiza automáticamente al ejecutar auth tests)
+- **`admin_token`**: Token JWT del admin (se actualiza automáticamente)
+- **`user_token`**: Token JWT del usuario regular (se actualiza automáticamente)
 - **`test_user_id`**: ID del usuario creado (se genera dinámicamente)
 - **`test_user_email`**: Email del usuario de prueba (único por ejecución)
 - **`test_user_username`**: Username del usuario de prueba (único por ejecución)
 - **`test_template_id`**: ID del template creado (se genera dinámicamente)
+- **`test_workout_id`**: ID del workout creado (se genera dinámicamente)
 
 ### Credenciales de prueba
 
 **Admin por defecto:**
+- Email: `admin@example.com`
+- Password: `admin123`
+
+**Usuario Regular:**
+- Email: `user@example.com`
+- Password: `user123`
 
 - Email: `admin@example.com`
 - Password: `admin123`
