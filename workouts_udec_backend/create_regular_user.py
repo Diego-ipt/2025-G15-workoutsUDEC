@@ -63,17 +63,52 @@ def create_regular_user(email: str, username: str, password: str, full_name: str
         db.close()
 
 def main():
-    """Main function with predefined user or custom input."""
+    """Main function with predefined users or custom input."""
     
-    # Option 1: Create a predefined test user
+    # Option 1: Create 3 predefined test users
     if len(sys.argv) == 1:
-        print("\n📝 Creating predefined test user...")
-        success = create_regular_user(
-            email="user@example.com",
-            username="regularuser",
-            password="user123",
-            full_name="Regular User Test"
-        )
+        print("\n📝 Creating 3 predefined test users...\n")
+        
+        users_to_create = [
+            {
+                "email": "user@example.com",
+                "username": "regularuser",
+                "password": "user123",
+                "full_name": "Regular User Test"
+            },
+            {
+                "email": "maria@example.com",
+                "username": "maria",
+                "password": "maria123",
+                "full_name": "Maria Garcia"
+            },
+            {
+                "email": "carlos@example.com",
+                "username": "carlos",
+                "password": "carlos123",
+                "full_name": "Carlos Rodriguez"
+            }
+        ]
+        
+        success_count = 0
+        skipped_count = 0
+        
+        for i, user_data in enumerate(users_to_create, 1):
+            print(f"[{i}/{len(users_to_create)}] Processing {user_data['email']}...")
+            result = create_regular_user(**user_data)
+            if result:
+                success_count += 1
+            elif result is False:
+                skipped_count += 1
+        
+        print("\n" + "="*80)
+        print(f"✅ SUMMARY: {success_count} created, {skipped_count} skipped, {len(users_to_create)} total")
+        print("="*80 + "\n")
+        
+        if success_count > 0:
+            print("💡 You can now login with these credentials:")
+            print("   - Via API: POST /api/auth/login")
+            print("   - Via Frontend: http://localhost:80\n")
     
     # Option 2: Create user with command line arguments
     elif len(sys.argv) >= 4:
@@ -83,20 +118,20 @@ def main():
         full_name = sys.argv[4] if len(sys.argv) > 4 else None
         
         success = create_regular_user(email, username, password, full_name)
+        
+        if success:
+            print("💡 You can now login with these credentials:")
+            print("   - Via API: POST /api/auth/login")
+            print("   - Via Frontend: http://localhost:80\n")
     
     else:
         print("\n📖 Usage:")
-        print("  python create_regular_user.py                          # Create default test user")
+        print("  python create_regular_user.py                          # Create 3 default test users")
         print("  python create_regular_user.py <email> <username> <password> [full_name]\n")
         print("Examples:")
         print("  python create_regular_user.py")
         print("  python create_regular_user.py john@example.com john john123 'John Doe'\n")
         return
-    
-    if success:
-        print("💡 You can now login with these credentials:")
-        print("   - Via API: POST /api/auth/login")
-        print("   - Via Frontend: http://localhost:80\n")
 
 if __name__ == "__main__":
     main()
