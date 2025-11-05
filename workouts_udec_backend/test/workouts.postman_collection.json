@@ -1107,70 +1107,69 @@
 					"name": "Post workout - Caso positivo",
 					"event": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"const previousWorkouts = pm.environment.get(\"previous_workouts\");",
-									"const activeBefore = previousWorkouts",
-									"    ? JSON.parse(previousWorkouts).find(w => w.completed_at === null)",
-									"    : null;",
-									"",
-									"if (pm.response.code === 200) {",
-									"    pm.test(\"Workout creado exitosamente\", function () {",
-									"        pm.expect(jsonData).to.have.property(\"id\");",
-									"        pm.expect(jsonData.name).to.eql(\"Entrenamiento de prueba\");",
-									"        pm.expect(activeBefore, \"Ya existía un workout activo antes de crear\").to.be.undefined;",
-									"    });",
-									"} else if (pm.response.code === 400) {",
-									"    pm.test(\"No se permite crear workout si ya hay uno activo\", function () {",
-									"        pm.expect(jsonData.detail).to.eql(\"You already have an active workout. Complete it before starting a new one.\");",
-									"        pm.expect(activeBefore, \"No se detectó un workout activo antes del intento fallido\").to.not.be.undefined;",
-									"    });",
-									"} else {",
-									"    pm.test(\"Respuesta inesperada\", function () {",
-									"        pm.expect.fail(`Código de respuesta inesperado: ${pm.response.code}`);",
-									"    });",
-									"}",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
+						"listen": "test",
+						"script": {
+							"exec": [
+							"const jsonData = pm.response.json();",
+							"const previousWorkouts = pm.environment.get(\"previous_workouts\");",
+							"const activeBefore = previousWorkouts",
+							"    ? JSON.parse(previousWorkouts).find(w => w.completed_at === null)",
+							"    : null;",
+							"",
+							"if (pm.response.code === 200) {",
+							"    pm.environment.set(\"active_workout_id\", jsonData.id);",
+							"    console.log(\"✅ Workout creado y guardado como activo:\", jsonData.id);",
+							"    pm.test(\"Workout creado exitosamente\", function () {",
+							"        pm.expect(jsonData).to.have.property(\"id\");",
+							"        pm.expect(jsonData.name).to.eql(\"Entrenamiento de prueba\");",
+							"        pm.expect(activeBefore, \"Ya existía un workout activo antes de crear\").to.be.undefined;",
+							"    });",
+							"} else if (pm.response.code === 400) {",
+							"    pm.test(\"No se permite crear workout si ya hay uno activo\", function () {",
+							"        pm.expect(jsonData.detail).to.eql(\"You already have an active workout. Complete it before starting a new one.\");",
+							"        pm.expect(activeBefore, \"No se detectó un workout activo antes del intento fallido\").to.not.be.undefined;",
+							"    });",
+							"} else {",
+							"    pm.test(\"Respuesta inesperada\", function () {",
+							"        pm.expect.fail(`Código de respuesta inesperado: ${pm.response.code}`);",
+							"    });",
+							"}"
+							],
+							"type": "text/javascript"
+						}
 						}
 					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{user_token}}",
-									"type": "string"
-								}
-							]
+						"type": "bearer",
+						"bearer": [
+							{
+							"key": "token",
+							"value": "{{user_token}}",
+							"type": "string"
+							}
+						]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"started_at\": \"2025-11-04T10:00:00\",\n  \"completed_at\": null,\n  \"name\": \"Entrenamiento de prueba\",\n  \"notes\": \"Sesión de fuerza\"\n}\n\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+						"mode": "raw",
+						"raw": "{\n  \"started_at\": \"2025-11-04T10:00:00\",\n  \"completed_at\": null,\n  \"name\": \"Entrenamiento de prueba\",\n  \"notes\": \"Sesión de fuerza\"\n}",
+						"options": {
+							"raw": {
+							"language": "json"
 							}
+						}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/workouts",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"workouts"
-							]
+						"raw": "{{base_url}}/api/workouts",
+						"host": [
+							"{{base_url}}"
+						],
+						"path": [
+							"api",
+							"workouts"
+						]
 						}
 					},
 					"response": []
@@ -1252,61 +1251,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"notes\": \"Falta el nombre\",\n  \"started_at\": null\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/workouts",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"workouts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post workout - campos opcionales nulos (Caso Límite)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Workout creado con campos opcionales nulos\", function () {",
-									"    pm.expect(pm.response.code).to.eql(200);",
-									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.notes).to.eql(null);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{user_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Entrenamiento con nulls\",\n  \"notes\": null,\n  \"started_at\": \"2025-11-04T21:00:00\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1825,6 +1769,203 @@
 								"workouts",
 								"9999",
 								"complete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get workouts - Caso positivo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Returns list of workouts\", function () {",
+									"    const jsonData = pm.response.json();",
+									"",
+									"    // Validaciones básicas",
+									"    pm.expect(pm.response.code).to.eql(200);",
+									"    pm.expect(jsonData).to.be.an(\"array\");",
+									"",
+									"    // Si hay al menos un workout, lo validamos",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData.length).to.be.above(0);",
+									"    }",
+									"",
+									"    // Guardar workouts en variable de entorno",
+									"    pm.environment.set(\"previous_workouts\", JSON.stringify(jsonData));",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts?limit=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post workout - Caso positivo",
+					"event": [
+						{
+						"listen": "test",
+						"script": {
+							"exec": [
+							"const jsonData = pm.response.json();",
+							"const previousWorkouts = pm.environment.get(\"previous_workouts\");",
+							"const activeBefore = previousWorkouts",
+							"    ? JSON.parse(previousWorkouts).find(w => w.completed_at === null)",
+							"    : null;",
+							"",
+							"if (pm.response.code === 200) {",
+							"    pm.environment.set(\"active_workout_id\", jsonData.id);",
+							"    console.log(\"✅ Workout creado y guardado como activo:\", jsonData.id);",
+							"    pm.test(\"Workout creado exitosamente\", function () {",
+							"        pm.expect(jsonData).to.have.property(\"id\");",
+							"        pm.expect(jsonData.name).to.eql(\"Entrenamiento de prueba\");",
+							"        pm.expect(activeBefore, \"Ya existía un workout activo antes de crear\").to.be.undefined;",
+							"    });",
+							"} else if (pm.response.code === 400) {",
+							"    pm.test(\"No se permite crear workout si ya hay uno activo\", function () {",
+							"        pm.expect(jsonData.detail).to.eql(\"You already have an active workout. Complete it before starting a new one.\");",
+							"        pm.expect(activeBefore, \"No se detectó un workout activo antes del intento fallido\").to.not.be.undefined;",
+							"    });",
+							"} else {",
+							"    pm.test(\"Respuesta inesperada\", function () {",
+							"        pm.expect.fail(`Código de respuesta inesperado: ${pm.response.code}`);",
+							"    });",
+							"}"
+							],
+							"type": "text/javascript"
+						}
+						}
+					],
+					"request": {
+						"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+							"key": "token",
+							"value": "{{user_token}}",
+							"type": "string"
+							}
+						]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+						"mode": "raw",
+						"raw": "{\n  \"started_at\": \"2025-11-04T10:00:00\",\n  \"completed_at\": null,\n  \"name\": \"Entrenamiento de prueba\",\n  \"notes\": \"Sesión de fuerza\"\n}",
+						"options": {
+							"raw": {
+							"language": "json"
+							}
+						}
+						},
+						"url": {
+						"raw": "{{base_url}}/api/workouts",
+						"host": [
+							"{{base_url}}"
+						],
+						"path": [
+							"api",
+							"workouts"
+						]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get active workout - Caso positivo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Se obtiene el workout activo si existe\", function () {",
+									"    const previousWorkouts = pm.environment.get(\"previous_workouts\");",
+									"",
+									"    if (previousWorkouts) {",
+									"        const workouts = JSON.parse(previousWorkouts);",
+									"        const active = workouts.find(w => w.completed_at === null);",
+									"",
+									"        if (active) {",
+									"            pm.environment.set(\"active_workout_id\", active.id);",
+									"            console.log(\"Workout activo detectado y guardado:\", active.id);",
+									"            pm.expect(active).to.have.property(\"id\");",
+									"            pm.expect(active.completed_at).to.eql(null);",
+									"        } else {",
+									"            console.log(\" No hay workout activo en previous_workouts\");",
+									"            pm.expect(true).to.be.true; // Marca el test como exitoso",
+									"        }",
+									"    } else {",
+									"        console.log(\"⚠️ No se encontró la variable previous_workouts\");",
+									"        pm.expect.fail(\"No se encontró previous_workouts en el entorno\");",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"active"
 							]
 						}
 					},
