@@ -10,9 +10,8 @@ from app.db.session import SessionLocal
 from app.models.user import User
 import sys
 
-def create_regular_user(email: str, username: str, password: str, full_name: str = None):
+def create_regular_user(db: Session, email: str, username: str, password: str, full_name: str = None):
     """Create a regular (non-admin) user."""
-    db = SessionLocal()
     
     try:
         # Check if user with this email already exists
@@ -56,11 +55,9 @@ def create_regular_user(email: str, username: str, password: str, full_name: str
         return True
         
     except Exception as e:
-        db.rollback()
         print(f"\n❌ Error creating user: {e}\n")
         return False
-    finally:
-        db.close()
+
 
 def main():
     """Main function with predefined users or custom input."""

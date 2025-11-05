@@ -10,8 +10,7 @@ from app.core.security import get_password_hash
 from app.db.session import SessionLocal
 from app.models.user import User
 
-def create_admin_user():
-    db = SessionLocal()
+def create_admin_user(db: Session):
     
     # Check if admin user already exists
     admin_user = db.query(User).filter(User.email == "admin@example.com").first()
@@ -38,7 +37,10 @@ def create_admin_user():
     print("Password: admin123")
     print("Please change the password after first login!")
     
-    db.close()
 
 if __name__ == "__main__":
-    create_admin_user()
+    db = SessionLocal()
+    try:
+        create_admin_user()
+    finally:
+        db.close()
