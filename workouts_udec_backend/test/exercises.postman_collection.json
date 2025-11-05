@@ -1,0 +1,575 @@
+{
+	"info": {
+		"_postman_id": "4ece9202-53f3-48f8-893d-1576fc2aadc9",
+		"name": "Workout Tracker API - Exercises",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46291297",
+		"_collection_link": "https://javier-5175262.postman.co/workspace/workouts-udec2~be5cea14-d0b7-428d-aeb1-a738142e0ee6/collection/46291297-4ece9202-53f3-48f8-893d-1576fc2aadc9?action=share&source=collection_link&creator=46291297"
+	},
+	"item": [
+		{
+			"name": "Admin Actions",
+			"item": [
+				{
+					"name": "POST Create Exercise - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const data = pm.response.json();",
+									"pm.test(\"Exercise created with correct data\", () => {",
+									"    pm.expect(data.name).to.eql(\"Sentadilla con Mancuerna\");",
+									"    pm.expect(data.exercise_type).to.eql(\"WEIGHT_BASED\");",
+									"    pm.expect(data).to.have.property(\"id\");",
+									"});",
+									"// Guardar el ID para usarlo en otras pruebas",
+									"pm.environment.set(\"created_exercise_id\", data.id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Sentadilla con Mancuerna\",\r\n    \"description\": \"Fundamental para el cuerpo inferior.\",\r\n    \"exercise_type\": \"WEIGHT_BASED\",\r\n    \"muscle_group\": \"Piernas\",\r\n    \"equipment\": \"Mancuerna, Rack Sentadilla\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Create Exercise - Sin campos opcionales",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const data = pm.response.json();",
+									"pm.test(\"Exercise created with minimal data\", () => {",
+									"    pm.expect(data.name).to.eql(\"Cardio\");",
+									"    pm.expect(data.exercise_type).to.eql(\"TIME_BASED\");",
+									"    pm.expect(data.description).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Cardio\",\r\n    \"exercise_type\": \"TIME_BASED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Create Exercise - Usuario regular no autorizado (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 403\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 403]);",
+									"});",
+									"pm.test(\"Error message indicates insufficient privileges\", () => {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.detail).to.eql(\"The user doesn't have enough privileges\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Ejercicio fallado\",\r\n    \"exercise_type\": \"WEIGHT_BASED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Update Exercise - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const data = pm.response.json();",
+									"pm.test(\"Exercise was updated correctly\", () => {",
+									"    pm.expect(data.name).to.eql(\"Sentadilla con Mancuerna (Actualizado)\");",
+									"    pm.expect(data.is_active).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Sentadilla con Mancuerna (Actualizado)\",\r\n    \"is_active\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/{{created_exercise_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"{{created_exercise_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Update Exercise - ID no existe (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+									"pm.test(\"Error message is correct\", () => {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.detail).to.eql(\"Exercise not found\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Error\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/999999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Exercise - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Success message is received\", () => {",
+									"    pm.expect(pm.response.json().message).to.eql(\"Exercise deleted successfully\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/exercises/{{created_exercise_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"{{created_exercise_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Exercise - ID no existe (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+									"pm.test(\"Error message is correct\", () => {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.detail).to.eql(\"Exercise not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/exercises/999999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Actions",
+			"item": [
+				{
+					"name": "GET List All Exercises - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const data = pm.response.json();",
+									"pm.test(\"Response is an array\", () => pm.expect(data).to.be.an('array'));",
+									"",
+									"// Verifica que los ejercicios devueltos sean solo los activos",
+									"const inactive_id = parseInt(pm.environment.get(\"created_exercise_id\"));",
+									"const foundInactive = data.some(ex => ex.id === inactive_id);",
+									"pm.test(\"List does not contain inactive exercises\", () => {",
+									"    pm.expect(foundInactive).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/exercises/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Exercise by ID - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const data = pm.response.json();",
+									"pm.test(\"Returns the correct exercise\", () => {",
+									"    const expected_id = parseInt(pm.environment.get(\"temp_exercise_id\"));",
+									"    pm.expect(data.id).to.eql(expected_id);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Este pre-request corre antes para asegurarse que exista el ID de ejercicio temporalmente\r",
+									"\r",
+									"const createExerciseRequest = {\r",
+									"  url: pm.environment.get('base_url') + '/api/exercises/',\r",
+									"  method: 'POST',\r",
+									"  header: {\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'Authorization': 'Bearer ' + pm.environment.get('admin_token')\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify({\r",
+									"      name: 'Temp Exercise for GET by ID Test',\r",
+									"      description: 'Ejercicio temporal.',\r",
+									"      exercise_type: 'WEIGHT_BASED'\r",
+									"    })\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(createExerciseRequest, (err, res) => {\r",
+									"  if (err) {\r",
+									"    console.error(\"Error al crear el ejercicio temporal:\", err);\r",
+									"  } else if (res.code === 200) {\r",
+									"    const responseBody = res.json();\r",
+									"    console.log(`Pre-request: Ejercicio temporal creado con ID: ${responseBody.id}`);\r",
+									"    pm.environment.set('temp_exercise_id', responseBody.id);\r",
+									"  } else {\r",
+									"      console.error(\"La creación del ejercicio temporal falló con status:\", res.code, \"y body:\", res.text());\r",
+									"  }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/exercises/{{temp_exercise_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"{{temp_exercise_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Exercise by ID - ID no existe (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+									"pm.test(\"Error message is correct\", () => {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data.detail).to.eql(\"Exercise not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/exercises/999999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
