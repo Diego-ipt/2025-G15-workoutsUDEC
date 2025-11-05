@@ -1,0 +1,794 @@
+{
+	"info": {
+		"_postman_id": "00ca940e-8174-4531-bdf9-22b1188909c2",
+		"name": "Workout Tracker API - Workouts Faltantes",
+		"description": "Tests para los endpoints de workouts desde /history en adelante. Es autocontenida y no interfiere con otras colecciones.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46291297",
+		"_collection_link": "https://javier-5175262.postman.co/workspace/workouts-udec~114ddf1f-5089-4e57-aa03-66543f1bd37b/collection/46291297-00ca940e-8174-4531-bdf9-22b1188909c2?action=share&source=collection_link&creator=46291297"
+	},
+	"item": [
+		{
+			"name": "1. Setup",
+			"item": [
+				{
+					"name": "Create Workout (for history)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const workout = pm.response.json();",
+									"pm.environment.set(\"w_detail_completed_workout_id\", workout.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Workout para Historial\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Workout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_completed_workout_id}}/complete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_completed_workout_id}}",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Active Workout (for modifying)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const workout = pm.response.json();",
+									"pm.environment.set(\"w_detail_active_workout_id\", workout.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Workout Activo para Detalles\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Test Exercise",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const exercise = pm.response.json();",
+									"pm.environment.set(\"w_detail_exercise_id\", exercise.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ejercicio para Detalles de Workout\",\n    \"exercise_type\": \"WEIGHT_BASED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/exercises/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.History",
+			"item": [
+				{
+					"name": "GET Workout History - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"History contains completed workout\", () => {",
+									"    const completedId = parseInt(pm.environment.get(\"w_detail_completed_workout_id\"));",
+									"    const found = jsonData.some(w => w.id === completedId);",
+									"    pm.expect(found).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/history",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Workout by ID - No existe (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+									"pm.test(\"Error message is 'Workout not found'\", () => {",
+									"    pm.expect(pm.response.json().detail).to.eql(\"Workout not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/999999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Exercises",
+			"item": [
+				{
+					"name": "Add Exercise to Active Workout (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Exercise added correctly\", () => {",
+									"    pm.expect(jsonData.exercise_id).to.eql(parseInt(pm.environment.get(\"w_detail_exercise_id\")));",
+									"});",
+									"pm.environment.set(\"w_detail_workout_exercise_id\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"exercise_id\": {{w_detail_exercise_id}},\n    \"order_index\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Exercise to Complete Workout (Caso Negativo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", () => pm.response.to.have.status(400));",
+									"pm.test(\"Error message is 'Cannot modify completed workout'\", () => {",
+									"    pm.expect(pm.response.json().detail).to.eql(\"Cannot modify completed workout\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"exercise_id\": {{w_detail_exercise_id}},\n    \"order_index\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_completed_workout_id}}/exercises",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_completed_workout_id}}",
+								"exercises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Set to Exercise - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Set added correctly\", () => {",
+									"    pm.expect(jsonData.reps).to.eql(10);",
+									"});",
+									"pm.environment.set(\"w_detail_set_id\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"set_number\": 1,\n    \"reps\": 10,\n    \"weight\": 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises/{{w_detail_workout_exercise_id}}/sets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises",
+								"{{w_detail_workout_exercise_id}}",
+								"sets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Set - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Set updated correctly\", () => {",
+									"    pm.expect(jsonData.reps).to.eql(12);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reps\": 12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises/{{w_detail_workout_exercise_id}}/sets/{{w_detail_set_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises",
+								"{{w_detail_workout_exercise_id}}",
+								"sets",
+								"{{w_detail_set_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Set - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Mensaje de éxito recibido\", () => {",
+									"    pm.expect(pm.response.json().message).to.eql(\"Exercise set deleted successfully\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises/{{w_detail_workout_exercise_id}}/sets/{{w_detail_set_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises",
+								"{{w_detail_workout_exercise_id}}",
+								"sets",
+								"{{w_detail_set_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Already deleted set - (Caso Limite)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises/{{w_detail_workout_exercise_id}}/sets/{{w_detail_set_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises",
+								"{{w_detail_workout_exercise_id}}",
+								"sets",
+								"{{w_detail_set_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Progression",
+			"item": [
+				{
+					"name": "GET Exercise Progression - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Response has correct structure\", () => {",
+									"    pm.expect(jsonData).to.have.property('exercise_id');",
+									"    pm.expect(jsonData).to.have.property('progression').that.is.an('array');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/progression/{{w_detail_exercise_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"progression",
+								"{{w_detail_exercise_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout notes- Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Mensaje de éxito recibido\", () => {",
+									"    pm.expect(pm.response.json().message).to.eql(\"Workout notes updated successfully\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notes\": \"Notas actualizadas para todo el workout.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/notes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"notes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Uodate Exercise Notes - Exitoso (Caso Positivo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Las notas del ejercicio fueron actualizadas\", () => {",
+									"    pm.expect(jsonData.notes).to.eql(\"Notas específicas para este ejercicio.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notes\": \"Notas específicas para este ejercicio.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/workouts/{{w_detail_active_workout_id}}/exercises/{{w_detail_workout_exercise_id}}/notes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"{{w_detail_active_workout_id}}",
+								"exercises",
+								"{{w_detail_workout_exercise_id}}",
+								"notes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
