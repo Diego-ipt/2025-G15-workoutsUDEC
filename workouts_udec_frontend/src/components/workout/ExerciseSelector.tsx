@@ -78,7 +78,7 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ isOpen, onClose }) 
   };
 
   const isExerciseInWorkout = (exerciseId: number): boolean => {
-    return activeWorkout?.workout_exercises?.some(we => we.exercise_id === exerciseId) || false;
+    return activeWorkout?.workout_exercises?.some((we: any) => we.exercise_id === exerciseId) || false;
   };
 
   // Get unique muscle groups for filtering
