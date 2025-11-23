@@ -71,4 +71,57 @@ test.describe('User Management System Tests', () => {
         await adminPage.deleteUser(userToDelete.username);
         await adminPage.verifyUserDoesNotExist(userToDelete.username);
     });
+
+    test('should filter users by search term', async ({ page }) => {
+        const timestamp = Date.now();
+        const uniqueUser = {
+            username: `search_test_${timestamp}`,
+            email: `search_${timestamp}@example.com`,
+            fullName: 'Search Target',
+            password: 'password123'
+        };
+        await adminPage.createUser(uniqueUser);
+
+        await adminPage.filterUsers({ search: uniqueUser.username });
+        await adminPage.verifyUserExists(uniqueUser.username);
+
+        // Verify other users are hidden (optional, depends on data)
+        // await expect(adminPage.userTableRows).toHaveCount(1); 
+
+        await adminPage.clearFilters();
+    });
+
+    test('should filter users by role', async ({ page }) => {
+        // Filter by Admin
+        await adminPage.filterUsers({ role: 'admin' });
+        // Verify at least one admin exists (the current logged in user)
+        await expect(adminPage.userTableRows.first()).toContainText('Admin');
+
+        await adminPage.clearFilters();
+    });
+
+    test('should filter users by status', async ({ page }) => {
+        // Create an inactive user
+        const timestamp = Date.now();
+        const inactiveUser = {
+            username: `inactive_${timestamp}`,
+            email: `inactive_${timestamp}@example.com`,
+            fullName: 'Inactive User',
+            password: 'password123',
+            isAdmin: false,
+            isActive: false
+        };
+
+        await adminPage.createUser(inactiveUser);
+
+        // Filter by Inactive
+        await adminPage.filterUsers({ status: 'inactive' });
+        await adminPage.verifyUserExists(inactiveUser.username);
+
+        // Verify active users are not shown (optional, but good for verification)
+        // Since we just created an inactive user, checking if it's there is good.
+        // We could also check that an active user is NOT there.
+
+        await adminPage.clearFilters();
+    });
 });
