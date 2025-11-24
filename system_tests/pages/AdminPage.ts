@@ -128,6 +128,10 @@ export class AdminPage extends BasePage {
         await expect(this.userTableRows.filter({ hasText: username })).not.toBeVisible();
     }
 
+    async verifyUserHasText(username: string, text: string) {
+        await expect(this.userTableRows.filter({ hasText: username })).toContainText(text);
+    }
+
     async filterUsers(criteria: { search?: string; status?: 'active' | 'inactive'; role?: 'admin' | 'user' }) {
         if (criteria.search) {
             await this.searchInput.fill(criteria.search);
@@ -139,7 +143,8 @@ export class AdminPage extends BasePage {
             await this.roleSelect.selectOption(criteria.role);
         }
         // Wait for table to update - simple wait for now, ideally wait for network or specific element change
-        await this.page.waitForTimeout(500);
+        // Wait for table to update
+        await this.page.waitForLoadState('networkidle');
     }
 
     async clearFilters() {

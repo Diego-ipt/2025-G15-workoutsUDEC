@@ -52,7 +52,7 @@ test.describe('User Management System Tests', () => {
 
         // Verify change (this might need a reload or check the table cell text)
         // Assuming the table updates automatically
-        await expect(page.locator(`tr:has-text("${userToEdit.username}")`)).toContainText(newName);
+        await adminPage.verifyUserHasText(userToEdit.username, newName);
     });
 
     test('should delete a user', async ({ page }) => {
