@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import type { ReactNode } from 'react';
 import { workoutService } from '../services/workoutService';
 import { AxiosError, isAxiosError } from 'axios';
@@ -373,4 +373,10 @@ export const ActiveWorkoutProvider: React.FC<ActiveWorkoutProviderProps> = ({ ch
       {children}
     </ActiveWorkoutContext.Provider>
   );
+};
+
+export const useActiveWorkout = () => {
+    const context = useContext(ActiveWorkoutContext);
+    if (!context) throw new Error("useActiveWorkout must be used within ActiveWorkoutProvider");
+    return context;
 };

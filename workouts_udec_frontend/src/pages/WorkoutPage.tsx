@@ -158,8 +158,8 @@ const WorkoutPage: React.FC = () => {
             <div className="space-y-4">
               {activeWorkout.workout_exercises && activeWorkout.workout_exercises.length > 0 ? (
                 activeWorkout.workout_exercises
-                  .sort((a, b) => a.order_index - b.order_index)
-                  .map((workoutExercise) => (
+                  .sort((a:any, b:any) => a.order_index - b.order_index)
+                  .map((workoutExercise: any) => (
                     <WorkoutExerciseCard
                       key={workoutExercise.id}
                       workoutExercise={workoutExercise}

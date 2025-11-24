@@ -29,7 +29,7 @@ services:
     env_file:
       - ./workouts_udec_backend/.env
     ports:
-      - "8001:8000"
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy # No iniciara backend hasta que la DB este lista
