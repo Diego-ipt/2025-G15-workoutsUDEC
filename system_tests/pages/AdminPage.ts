@@ -30,8 +30,9 @@ export class AdminPage extends BasePage {
 
         // Filters
         this.searchInput = page.locator('input[placeholder*="Search users"]');
-        this.statusSelect = page.locator('select').nth(0);
-        this.roleSelect = page.locator('select').nth(1);
+        // Improved selectors: Find the select that contains the expected options
+        this.statusSelect = page.locator('select').filter({ has: page.locator('option[value="active"], option:has-text("Active")') }).first();
+        this.roleSelect = page.locator('select').filter({ has: page.locator('option[value="admin"], option:has-text("Admin")') }).first();
         this.clearFiltersButton = page.locator('button:has-text("Clear")');
 
         // Modal
@@ -115,9 +116,12 @@ export class AdminPage extends BasePage {
 
     async deleteUser(username: string) {
         const row = this.userTableRows.filter({ hasText: username });
-        await row.locator('button:has-text("Delete")').click();
-        // Confirm delete (based on UserTable.tsx logic, it shows a Confirm button)
-        await row.locator('button:has-text("Confirm")').click();
+        // Check if row exists before trying to delete to avoid errors in cleanup
+        if (await row.count() > 0) {
+            await row.locator('button:has-text("Delete")').click();
+            // Confirm delete (based on UserTable.tsx logic, it shows a Confirm button)
+            await row.locator('button:has-text("Confirm")').click();
+        }
     }
 
     async verifyUserExists(username: string) {
@@ -142,9 +146,7 @@ export class AdminPage extends BasePage {
         if (criteria.role) {
             await this.roleSelect.selectOption(criteria.role);
         }
-        // Wait for table to update - simple wait for now, ideally wait for network or specific element change
-        // Wait for table to update
-        await this.page.waitForLoadState('networkidle');
+        // Removed flaky networkidle wait. Assertions in tests should handle waiting.
     }
 
     async clearFilters() {

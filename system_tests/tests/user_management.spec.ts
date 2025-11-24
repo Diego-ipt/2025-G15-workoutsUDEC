@@ -5,6 +5,7 @@ import { AdminPage } from '../pages/AdminPage';
 test.describe('User Management System Tests', () => {
     let loginPage: LoginPage;
     let adminPage: AdminPage;
+    let createdUsers: string[] = [];
 
     test.beforeEach(async ({ page }) => {
         loginPage = new LoginPage(page);
@@ -15,6 +16,14 @@ test.describe('User Management System Tests', () => {
         // Verify we are redirected to dashboard or home, then navigate to admin
         // Assuming login redirects to home, we then go to admin
         await adminPage.navigateToUserManagement();
+    });
+
+    test.afterEach(async () => {
+        // Cleanup created users
+        for (const username of createdUsers) {
+            await adminPage.deleteUser(username);
+        }
+        createdUsers = []; // Reset for next test
     });
 
     test('should display user management table', async ({ page }) => {
@@ -32,6 +41,7 @@ test.describe('User Management System Tests', () => {
         };
 
         await adminPage.createUser(newUser);
+        createdUsers.push(newUser.username);
         await adminPage.verifyUserExists(newUser.username);
     });
 
@@ -45,6 +55,7 @@ test.describe('User Management System Tests', () => {
             password: 'password123'
         };
         await adminPage.createUser(userToEdit);
+        createdUsers.push(userToEdit.username);
 
         // Edit the user
         const newName = 'Updated Name';
@@ -65,11 +76,19 @@ test.describe('User Management System Tests', () => {
             password: 'password123'
         };
         await adminPage.createUser(userToDelete);
+        // We don't push to createdUsers here because we are about to delete it in the test
+        // But if the test fails before deletion, it might remain. 
+        // Safer to push and let deleteUser handle non-existent users gracefully (which we added check for)
+        createdUsers.push(userToDelete.username);
+
         await adminPage.verifyUserExists(userToDelete.username);
 
         // Delete the user
         await adminPage.deleteUser(userToDelete.username);
         await adminPage.verifyUserDoesNotExist(userToDelete.username);
+
+        // Remove from cleanup list since it's already deleted
+        createdUsers = createdUsers.filter(u => u !== userToDelete.username);
     });
 
     test('should filter users by search term', async ({ page }) => {
@@ -81,6 +100,7 @@ test.describe('User Management System Tests', () => {
             password: 'password123'
         };
         await adminPage.createUser(uniqueUser);
+        createdUsers.push(uniqueUser.username);
 
         await adminPage.filterUsers({ search: uniqueUser.username });
         await adminPage.verifyUserExists(uniqueUser.username);
@@ -113,6 +133,7 @@ test.describe('User Management System Tests', () => {
         };
 
         await adminPage.createUser(inactiveUser);
+        createdUsers.push(inactiveUser.username);
 
         // Filter by Inactive
         await adminPage.filterUsers({ status: 'inactive' });
