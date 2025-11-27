@@ -1,15 +1,19 @@
 from app.db.session import SessionLocal
-from create_admin import create_admin_user
-from create_regular_user import create_regular_user
+from setup.create_admin import create_admin_user
+from setup.create_regular_user import create_regular_user
+from setup.create_exercises import create_default_exercises
+from setup.create_templates import create_default_templates
 
 print("Creando data inicial...")
 
 db = SessionLocal()
 
 try:
+    # Creando admin
     print("\n--- Creando Admin ---")
     create_admin_user(db)
 
+    # Creando usuarios
     print("\n--- Creando usuarios ---")
     users_to_create = [
         {
@@ -34,6 +38,12 @@ try:
     
     for user_data in users_to_create:
         create_regular_user(db=db, **user_data)
+
+    # Crear ejercicios
+    create_default_exercises(db)
+
+    # Crear templates
+    create_default_templates()
 
 finally:
     db.close()

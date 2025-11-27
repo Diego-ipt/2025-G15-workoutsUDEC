@@ -4,10 +4,11 @@ set -e
 
 # Scripts de initial setup
 echo "Running database migrations..."
-python initial_setup.py
+python -m initial_setup
 
 echo "Creating admin and users if it doesn't exist..."
-python initial_data.py
+echo "Creating exercises and templates if it doesn't exist..."
+python -m initial_data
 
 # Esto reemplaza el proceso del script de shell con el comando
 # asi uvicorn es el proceso principal y deberia de ejecutarse la api correcamente
