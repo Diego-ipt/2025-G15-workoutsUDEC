@@ -169,3 +169,7 @@ pgdata/
 # Backup files
 *.bak
 *.backup
+
+# Playwright
+system_tests/playwright-report
+system_tests/test-results
