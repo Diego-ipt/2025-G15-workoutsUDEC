@@ -26,7 +26,9 @@ test.describe('Workout Flow', () => {
         entonces no aparece que hay un workout en progreso hasta recargar la pagina, por eso se implementa un reload manual aca
         */
         await page.reload();
-        await page.waitForTimeout(500);
+        // Esperemos que la pagina cargue bien
+        await page.waitForTimeout(100);
+        
         const continueWorkoutBtn = page.getByRole('button', { name: /continue workout/i }).first();
         
         // Si no hay ejercicio solo espera 2 segundos
@@ -56,5 +58,28 @@ test.describe('Workout Flow', () => {
 
         // Verificar que aparece
         await workoutPage.verifyExerciseInList(exerciseName);
+    });
+
+    test('Should add a set, complete it and finish workout', async ({page}) => {
+        // Inicia workout
+        await workoutPage.startEmptyWorkout();
+
+        // Agrega Cardio (time based)
+        await workoutPage.AddExercise('Cardio');
+
+        // Agrega BenchPress (weight based)
+        await workoutPage.AddExercise('Bench Press');
+
+        // Agregar set a cardio (15 minutos)
+        await workoutPage.addSetToExercise('Cardio', '15', '0');
+
+        // Agregar set a bench press
+        await workoutPage.addSetToExercise('Bench Press', '60', '8');
+        
+        // Completar ambos
+        await workoutPage.completeLastSet('Cardio');
+        await workoutPage.completeLastSet('Bench Press');
+
+        await workoutPage.page.getByText('Done');
     });
 })

@@ -47,7 +47,15 @@ export class WorkoutPage extends BasePage {
         this.doneButton = page.getByRole('button', {name: 'Done'})
 
         // Sets
-        this.addSetBtn = page.getByRole('button', { name: '+ Add Set'});
+        this.addSetBtn = page.getByRole('button', { name: 'Add Set'});
+    }
+
+    // Helper para encontrar un ejercicio especifico
+    private getExerciseCard(exerciseName: string) {
+        return this.page.locator('div')
+            .filter({hasText: exerciseName})
+            .filter({ has: this.addSetBtn})
+            .last();
     }
 
     // Acciones
@@ -120,20 +128,22 @@ export class WorkoutPage extends BasePage {
         await expect(this.page.getByRole('heading', { name: exerciseName })).toBeVisible();
     }
 
-    async addSetToExercise(weight: string, reps: string) {
+    async addSetToExercise(exerciseName: string, val1: string, val2: string) {
+        // Elegimos el ejercicio
+        const card = this.getExerciseCard(exerciseName);
+
         // Click en add set
-        await this.page.getByRole('button', { name: 'Add Set' }).click();
-        
-        // Buscar set habilitado
-        const lastRowInputs = this.page.locator('input[type="number"]');
-        
-        await lastRowInputs.nth(-4).fill(weight); 
-        
-        await lastRowInputs.nth(-3).fill(reps);
+        await card.getByRole('button', { name: 'Add set'}).click();
+        const cardInputs = card.locator('input[type="number"]');
+         
+        await cardInputs.nth(-4).fill(val1); 
+        await cardInputs.nth(-3).fill(val2);
+
     }
 
-    async completeLastSet() {
-        await this.page.getByTitle('Complete set').last().click();
+    async completeLastSet(exerciseName: string) {
+        const card = this.getExerciseCard(exerciseName);
+        await card.getByTitle('Complete set').last().click();
     }
 
 }
