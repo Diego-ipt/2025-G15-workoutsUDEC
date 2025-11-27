@@ -171,5 +171,5 @@ pgdata/
 *.backup
 
 # Playwright
-system_tests/playwright-report
-system_tests/test-results
+system_tests/playwright-report/*
+system_tests/test-results/*

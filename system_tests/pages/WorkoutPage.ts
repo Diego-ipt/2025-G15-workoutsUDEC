@@ -37,7 +37,7 @@ export class WorkoutPage extends BasePage {
         this.workoutStartButton = page.getByRole('button', {name: 'Start Workout'});
 
         // Current workout
-        this.addExerciseBtn = page.getByRole('button', {name: '+ Add Exercise'});
+        this.addExerciseBtn = page.getByRole('button', {name: 'Add Exercise'});
         this.addFirstExerciseBtn = page.getByRole('button', {name: 'Add First Exercise'});
         this.cancelButton = page.getByRole('button', {name: 'Cancel'});
         this.completeButton = page.getByRole('button', {name: 'Complete'});
@@ -88,11 +88,14 @@ export class WorkoutPage extends BasePage {
 
         // Buscamos el ejercicio
         await this.page.locator('div')
+            // Que tenga el nombre del ejercicio
             .filter({ hasText: exerciseName })
-            .getByRole('button', { name: '+ Add' })
-            .first()
+            // Que tenga el boton Add
+            .filter({ has: this.page.getByRole('button', { name: /add/i}) })
+            .last()
+            .getByRole('button', { name: /add/i })
             .click();
-
+        
         // Se cierra solo
         await expect(this.searchExerciseInput).not.toBeVisible();
     }
@@ -114,12 +117,12 @@ export class WorkoutPage extends BasePage {
     }
 
     async verifyExerciseInList(exerciseName: string) {
-        await expect(this.page.getByText(exerciseName)).toBeVisible();
+        await expect(this.page.getByRole('heading', { name: exerciseName })).toBeVisible();
     }
 
     async addSetToExercise(weight: string, reps: string) {
         // Click en add set
-        await this.page.getByRole('button', { name: '+ Add Set' }).click();
+        await this.page.getByRole('button', { name: 'Add Set' }).click();
         
         // Buscar set habilitado
         const lastRowInputs = this.page.locator('input[type="number"]');

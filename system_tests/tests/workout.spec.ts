@@ -25,7 +25,8 @@ test.describe('Workout Flow', () => {
         por alguna razon cuando se abre la pagina despues de borrar las cookies (Tal como lo hace playwright en cada sesion),
         entonces no aparece que hay un workout en progreso hasta recargar la pagina, por eso se implementa un reload manual aca
         */
-        await workoutPage.page.reload();
+        await page.reload();
+        await page.waitForTimeout(500);
         const continueWorkoutBtn = page.getByRole('button', { name: /continue workout/i }).first();
         
         // Si no hay ejercicio solo espera 2 segundos
