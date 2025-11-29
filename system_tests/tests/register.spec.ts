@@ -37,7 +37,7 @@ test.describe('Register Page Tests', () => {
             'juanp',
             'juan@example.com',
             'pass1234',
-            'pass9999' // diferente
+            'pass9999'
         );
 
         await register.submit();
@@ -49,7 +49,6 @@ test.describe('Register Page Tests', () => {
     test('should show error when username already exists', async ({ page }) => {
         const register = new RegisterPage(page);
 
-        // ⚠ Ajusta a un email real ya existente en tu BD para el test
         await register.register(
             'Existing User',
             'regularuser',
@@ -68,7 +67,6 @@ test.describe('Register Page Tests', () => {
     test('should show error when email is already taken', async ({ page }) => {
         const register = new RegisterPage(page);
 
-        // ⚠ Ajusta a un email real ya existente en tu BD para el test
         await register.register(
             'Existing User',
             'existinguser123',
