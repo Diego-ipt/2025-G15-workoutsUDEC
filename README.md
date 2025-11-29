@@ -26,6 +26,8 @@ npm playwright install
 npx playwright test
 ```
 
+Mas detalles en el README de system_test.md .
+
 # 🏋️‍♂️ Workout Tracker - Full Stack Application
 
 A full-stack workout tracking application that helps users manage their fitness journey with detailed workout logging, exercise management, and progress tracking.
