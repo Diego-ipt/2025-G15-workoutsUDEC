@@ -35,15 +35,23 @@ system_tests/
 
 ## Prerrequisitos
 
-Hay que navegar a la carpeta `system_tests` e instalar las npm y playwright para correr los tests:
+Se utiliza docker para desplegar los servicios de la página. Para ello se hace:
+
+```bash
+sudo docker-compose down -v     #para eliminar los contenedores anteriores
+sudo docker-compose up --build
+```
+
+Antes de proseguir, comprobar que el servidor de desarrollo esté ejecutándose en `http://localhost:3000` antes de iniciar las pruebas.
+
+
+Luego, hay que navegar a la carpeta `system_tests` e instalar las npm y playwright para correr los tests:
 
 ```bash
 cd system_tests
 npm install
 npx playwright install
 ```
-
-El servidor de desarrollo debe estar ejecutándose en `http://localhost:3000` antes de iniciar las pruebas.
 
 ## Ejecutar Tests
 
