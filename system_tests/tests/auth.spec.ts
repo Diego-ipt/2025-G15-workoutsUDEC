@@ -5,10 +5,6 @@ import { AdminPage } from '../pages/AdminPage';
 
 test.describe('Authentication Tests', () => {
 
-    // -----------------------------
-    //        LOGIN VALIDATION
-    // -----------------------------
-
     test('should show error for wrong password', async ({ page }) => {
         const login = new LoginPage(page);
 
@@ -42,10 +38,8 @@ test.describe('Authentication Tests', () => {
 
         await login.navigate('/login');
 
-        // Submit sin llenar campos
         await login.submitButton.click();
 
-        // Dependiendo de tus mensajes reales de error
         await expect(page.locator('text=Email')).toBeVisible();
         await expect(page.locator('text=Password')).toBeVisible();
 
@@ -53,10 +47,7 @@ test.describe('Authentication Tests', () => {
     });
 
 
-    // -----------------------------
-    //        NON-ADMIN ACCESS
-    // -----------------------------
-
+    //aceso de usuario no admin
     test('non-admin user must NOT access /admin and should be redirected', async ({ page }) => {
         const login = new LoginPage(page);
 

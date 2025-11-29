@@ -7,16 +7,12 @@ const USER_PASSWORD = 'user123';
 
 test.describe('Workout History Page Tests', () => {
 
-  // --------------------------------------------------------------------
-  // Antes de cada test → loguear y entrar al dashboard
-  // --------------------------------------------------------------------
   test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
 
     await login.navigate('/login');
     await login.login(USER_EMAIL, USER_PASSWORD);
 
-    // Verificamos que realmente estamos en el dashboard
     await expect(page).toHaveURL(/dashboard/);
   });
 
@@ -35,9 +31,7 @@ test.describe('Workout History Page Tests', () => {
 
     await history.navigateToHistory();
 
-    // Simulación de datos: crear un workout antes de buscar
     await page.evaluate(() => {
-      // Aquí simulas que el backend ya devolvió un workout
       const container = document.createElement('div');
       container.textContent = 'Cardio Training';
       container.className = 'workout-item';

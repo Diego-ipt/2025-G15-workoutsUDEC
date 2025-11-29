@@ -7,9 +7,6 @@ const USER_PASSWORD = 'user123';
 
 test.describe('Profile Page Tests', () => {
 
-    // --------------------------------------------------------------------
-    // Antes de cada test → loguear y entrar al dashboard
-    // --------------------------------------------------------------------
     test.beforeEach(async ({ page }) => {
         const login = new LoginPage(page);
 
@@ -23,8 +20,7 @@ test.describe('Profile Page Tests', () => {
     test('should access profile from dashboard clickable element', async ({ page }) => {
         const profile = new ProfilePage(page);
 
-        // Aquí es donde sigues el estilo de tus compañeros:
-        await page.click('a[href="/profile"]');  // o el botón que corresponda
+        await page.click('a[href="/profile"]');  
 
         await expect(page).toHaveURL(/profile/);
 
@@ -35,8 +31,7 @@ test.describe('Profile Page Tests', () => {
     test('should access profile from navbar', async ({ page }) => {
         const profile = new ProfilePage(page);
 
-        await page.click('nav >> text=Profile');  // por ejemplo, ajustar al selector real
-
+        await page.click('nav >> text=Profile');  
         await expect(page).toHaveURL(/profile/);
         await expect(profile.fullNameInput).toBeVisible();
     });
@@ -68,9 +63,6 @@ test.describe('Profile Page Tests', () => {
 
     });
 
-    // --------------------------------------------------------------------
-    // 4) VALIDACIONES DEL FORM
-    // --------------------------------------------------------------------
 
     test('should validate password mismatch error', async ({ page }) => {
         const profile = new ProfilePage(page);
@@ -110,9 +102,6 @@ test.describe('Profile Page Tests', () => {
         await profile.expectError('Current password is required to change password');
 
     });
-    // --------------------------------------------------------------------
-    // 5) ERRORES DEL BACKEND
-    // --------------------------------------------------------------------
     test('should show error when current password is incorrect', async ({ page }) => {
         const profile = new ProfilePage(page);
 

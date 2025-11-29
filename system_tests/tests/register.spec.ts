@@ -8,7 +8,6 @@ test.describe('Register Page Tests', () => {
         await registerPage.navigateToRegister();
     });
 
-    // --- TEST 1: Registro exitoso ---
     test('should register a new user successfully', async ({ page }) => {
         const register = new RegisterPage(page);
 
@@ -28,7 +27,6 @@ test.describe('Register Page Tests', () => {
     });
 
 
-    // --- TEST 2: Passwords no coinciden ---
     test('should show error when passwords do not match', async ({ page }) => {
         const register = new RegisterPage(page);
 
@@ -63,7 +61,6 @@ test.describe('Register Page Tests', () => {
     });
 
 
-    // --- TEST 3: Email ya registrado ---
     test('should show error when email is already taken', async ({ page }) => {
         const register = new RegisterPage(page);
 
@@ -81,7 +78,6 @@ test.describe('Register Page Tests', () => {
     });
 
 
-    // --- TEST 4: Navegación hacia Login ---
     test('should navigate to login page from register page', async ({ page }) => {
         const register = new RegisterPage(page);
 
