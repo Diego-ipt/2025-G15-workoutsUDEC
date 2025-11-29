@@ -1,3 +1,31 @@
+
+## 🚀 Quick Start
+### 1. Docker
+Para armar y correr todo junto:
+
+```bash
+docker-compose up --build
+```
+
+* Es necesario tener el archivo `.env` en "workouts_udec_backend", vease archivo `.env.example` para referencia.
+
+Mas detalles en los README de cada servicio.
+
+---
+### 2. Playwright Tests
+
+Ir a la carpeta system_tests:
+```bash
+cd system_tests
+```
+
+Y ejecutar los siguientes comandos:
+```bash
+npm install
+npm playwright install
+npx playwright test
+```
+
 # 🏋️‍♂️ Workout Tracker - Full Stack Application
 
 A full-stack workout tracking application that helps users manage their fitness journey with detailed workout logging, exercise management, and progress tracking.
@@ -38,15 +66,6 @@ This application consists of FastAPI backend with a React TypeScript frontend, p
 | **Authentication** | JWT Tokens            | Secure stateless authentication        |
 | **Build Tools**    | Vite + ESLint         | Fast development and quality assurance |
 
-## 🚀 Quick Start
-
-Check the readme in workouts_udec_backend and workouts_udec_frontend to get started.
-
-Para correr todo junto:
-
-```bash
-docker-compose up --build
-```
 ## 🗄️ Database with Docker
 
 ### Prerequisites
