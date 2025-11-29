@@ -144,8 +144,8 @@ export class ProfilePage extends BasePage {
             this.ORIGINAL.fullName
         );
 
-        console.log(this.CURRENT.password)
-        console.log(this.ORIGINAL.password)
+        //console.log(this.CURRENT.password)
+        //console.log(this.ORIGINAL.password)
 
 
         // 3) Restaurar password solo si cambió
